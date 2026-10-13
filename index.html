@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SoneVault</title>
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#BC674D">
 <meta name="description" content="SoneVault — a searchable archive of Korean folk songs and regional recordings.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -264,10 +264,10 @@ footer .wrap{display:flex;gap:10px 24px;flex-wrap:wrap;justify-content:space-bet
 <header class="top">
   <div class="wrap">
     <nav class="nav">
-      <a class="logo" href="#home"><svg class="i"><use href="#i-note"/></svg>SoneVault</a>
+      <a class="logo" href="/" data-route="home"><svg class="i"><use href="#i-note"/></svg>SoneVault</a>
       <div class="links">
-        <a href="#about" data-route="about" data-i18n="navAbout"></a>
-        <a href="#today" data-route="today" data-i18n="navToday"></a>
+        <a href="/about" data-route="about" data-i18n="navAbout"></a>
+        <a href="/today" data-route="today" data-i18n="navToday"></a>
       </div>
       <div class="sp"></div>
       <button class="lang" id="langBtn" type="button"><svg class="i"><use href="#i-globe"/></svg><span id="langLabel"></span></button>
@@ -275,9 +275,9 @@ footer .wrap{display:flex;gap:10px 24px;flex-wrap:wrap;justify-content:space-bet
       <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mmenu"><svg class="i"><use href="#i-menu"/></svg></button>
     </nav>
     <div class="mmenu" id="mmenu" hidden>
-      <a href="#home" data-route="home" data-i18n="navArchive"></a>
-      <a href="#about" data-route="about" data-i18n="navAbout"></a>
-      <a href="#today" data-route="today" data-i18n="navToday"></a>
+      <a href="/" data-route="home" data-i18n="navArchive"></a>
+      <a href="/about" data-route="about" data-i18n="navAbout"></a>
+      <a href="/today" data-route="today" data-i18n="navToday"></a>
       <div class="row">
         <button class="lang" id="langBtnM" type="button"><svg class="i"><use href="#i-globe"/></svg><span class="langLabel"></span></button>
         <button class="btn" id="contribBtnM" type="button"><svg class="i"><use href="#i-plus"/></svg><span data-i18n="contribute"></span></button>
@@ -324,7 +324,7 @@ footer .wrap{display:flex;gap:10px 24px;flex-wrap:wrap;justify-content:space-bet
       <p data-i18n="aboutSub"></p>
     </div>
     <div class="mission">
-      <img src="images/about.webp" alt="Reel-to-reel tapes and cassettes stacked in front of a turntable">
+      <img src="/images/about.webp" alt="Reel-to-reel tapes and cassettes stacked in front of a turntable">
       <div>
         <h2 id="missionTitle"></h2>
         <p data-i18n="mission1"></p>
@@ -349,7 +349,7 @@ footer .wrap{display:flex;gap:10px 24px;flex-wrap:wrap;justify-content:space-bet
       <h2 id="teamTitle"></h2>
       <div class="team">
         <div class="who">
-          <img src="images/profile.webp" alt="">
+          <img src="/images/profile.webp" alt="">
           <h3 data-i18n="founderName"></h3>
           <span>Founder &amp; CEO</span>
         </div>
@@ -526,7 +526,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':
 const icon = id => `<svg class="i"><use href="#i-${id}"/></svg>`;
 
 /* ---------- data ---------- */
-fetch('sounds.json').then(r=>r.json()).then(d=>{
+fetch('/sounds.json').then(r=>r.json()).then(d=>{
   D = d;
   ITEMS = d.items.map((r,i)=>{
     const [raw,c,s,rg,l] = r;
@@ -761,15 +761,32 @@ function fitShorts(){
 window.addEventListener('resize', fitShorts);
 
 /* ---------- routing ---------- */
+const PAGES = ['home','about','today'];
+function currentPage(){
+  const seg = location.pathname.replace(/\/+$/,'').split('/').pop();
+  return PAGES.includes(seg) ? seg : 'home';
+}
 function route(){
-  const r = (location.hash||'#home').slice(1);
-  const page = ['about','today'].includes(r) ? r : 'home';
-  ['home','about','today'].forEach(p=>{ $('#page-'+p).hidden = p!==page; });
+  const page = currentPage();
+  PAGES.forEach(p=>{ $('#page-'+p).hidden = p!==page; });
   document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('on', a.dataset.route===page));
   if(page==='today'){ renderToday(); requestAnimationFrame(fitShorts); }
   window.scrollTo(0,0);
 }
-window.addEventListener('hashchange', route);
+function go(page){
+  const path = page==='home' ? '/' : '/'+page;
+  if(location.pathname !== path){ try{ history.pushState({page}, '', path); }catch(e){} }
+  route();
+}
+// Same-page navigation without reloading
+document.addEventListener('click', e=>{
+  const a = e.target.closest('a[data-route]');
+  if(!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button!==0) return;
+  e.preventDefault(); go(a.dataset.route);
+});
+window.addEventListener('popstate', route);
+// Old links like sonevault.com/#about still work
+(function(){ const h = location.hash.slice(1); if(PAGES.includes(h)){ try{ history.replaceState(null,'', h==='home'?'/':'/'+h); }catch(e){} } })();
 
 function toast(msg){ const el=$('#toast'); el.textContent=msg; el.hidden=false; clearTimeout(el._t); el._t=setTimeout(()=>el.hidden=true,1800); }
 
