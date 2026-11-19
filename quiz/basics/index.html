@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SoneVault</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#BC674D">
+<meta name="description" content="SoneVault — a searchable archive of Korean folk songs and regional recordings.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SoneVault">
+<meta property="og:title" content="SoneVault · 세상의 소리">
+<meta property="og:description" content="잊혀 가는 한국의 민요와 방언 11,600여 곡을 찾아 듣는 아카이브. A searchable archive of Korean folk songs and regional dialects.">
+<meta property="og:url" content="https://sonevault.com/">
+<meta property="og:image" content="https://sonevault.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sonevault.com/og-image.png">
+<script>(function(){try{var v=localStorage.getItem('sv-theme');if(v==='dark'||v==='light')document.documentElement.setAttribute('data-theme',v);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: centered 1270px column; hero + search, filter bar, 4-up card grid; hash-routed pages (archive / about / today). */
+:root{
+  --accent:#BC674D;
+  --accent-ink:#a4553d;
+  --accent-soft:#f6e6e0;
+  --bg:#f7f2f0;
+  --bg-2:#fdfbfa;
+  --surface:#ffffff;
+  --fg:#1e1a19;
+  --fg-2:#5e5552;
+  --fg-3:#958a86;
+  --line:#ece4e1;
+  --chip:#ece9e7;
+  --overlay:rgba(30,26,25,.45);
+  --shadow:0 1px 2px rgba(60,35,25,.04),0 4px 18px rgba(60,35,25,.05);
+  --font:"DM Sans","Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --r-card:18px;
+  --good:#3f7d5a;--good-soft:#e6f1ea;--bad:#b5483b;--bad-soft:#f8e4e0;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --good:#6fbf8f;--good-soft:#1e3328;--bad:#e3806f;--bad-soft:#3b2320;--accent:#d27f65;--accent-ink:#e39a83;--accent-soft:#3a2620;--bg:#171312;--bg-2:#1d1817;--surface:#231d1c;
+  --fg:#f3ece9;--fg-2:#c2b6b2;--fg-3:#8c7f7b;--line:#352c2a;--chip:#302826;--overlay:rgba(0,0,0,.6);
+  --shadow:0 1px 2px rgba(0,0,0,.3);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --good:#6fbf8f;--good-soft:#1e3328;--bad:#e3806f;--bad-soft:#3b2320;--accent:#d27f65;--accent-ink:#e39a83;--accent-soft:#3a2620;--bg:#171312;--bg-2:#1d1817;--surface:#231d1c;
+  --fg:#f3ece9;--fg-2:#c2b6b2;--fg-3:#8c7f7b;--line:#352c2a;--chip:#302826;--overlay:rgba(0,0,0,.6);
+  --shadow:0 1px 2px rgba(0,0,0,.3);color-scheme:dark}
+
+*{box-sizing:border-box}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{margin:0;font-family:var(--font);color:var(--fg);background:var(--bg);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+body>main{flex:1 0 auto}
+body>footer{flex:none}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1270px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{text-wrap:balance;letter-spacing:-.02em;margin:0}
+.ac{color:var(--accent)}
+svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
+.nav{display:flex;align-items:center;gap:12px;height:72px}
+.logo{display:flex;align-items:center;gap:8px;color:var(--accent);font-weight:700;font-size:22px;text-decoration:none;letter-spacing:-.01em}
+.logo svg{width:24px;height:24px}
+.links{display:flex;gap:40px;margin-left:36px}
+.links a{text-decoration:none;font-size:15px;color:var(--fg);padding:6px 0;transition:color .15s}
+.links a:hover{color:var(--accent)}
+.links a.on{color:var(--accent);font-weight:600}
+.nav .sp{flex:1}
+.lang{display:flex;align-items:center;gap:6px;border:1px solid var(--line);color:var(--fg);background:var(--surface);border-radius:99px;height:36px;padding:0 14px;font-size:13px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:border-color .15s}
+.lang svg{width:15px;height:15px;color:var(--fg-2)}
+.lang:hover,.theme:hover{border-color:var(--accent)}
+.theme{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:50%;cursor:pointer;transition:border-color .15s}
+.theme svg{width:17px;height:17px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;border:0;border-radius:99px;padding:11px 22px;font-weight:500;cursor:pointer;text-decoration:none;font-size:15px;transition:background .15s}
+.btn:hover{background:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn.ghost:hover{background:var(--accent-soft)}
+
+/* hero */
+.hero{text-align:center;padding-block:72px 40px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--accent-soft);color:var(--fg);border-radius:99px;padding:8px 18px;font-size:13px;font-weight:600;letter-spacing:.14em}
+.eyebrow svg{color:var(--accent)}
+.hero h1{font-size:clamp(40px,6vw,64px);font-weight:700;margin-top:26px;line-height:1.1}
+.hero p.lede{max-width:600px;margin:20px auto 0;color:var(--fg);font-size:17px}
+.search{position:relative;max-width:520px;margin:36px auto 0}
+.search svg{position:absolute;left:20px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--fg-3)}
+.search input{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:15px 44px 15px 52px;font-size:16px;box-shadow:var(--shadow)}
+.search input::placeholder{color:var(--fg-3)}
+.search input:focus{outline:none;border-color:var(--accent)}
+.search .clr{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--fg-3);cursor:pointer;padding:6px;display:flex}
+.stats{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 26px;margin-top:22px;color:var(--fg-2);font-size:14px;font-variant-numeric:tabular-nums}
+.stats b{color:var(--fg);font-weight:600}
+
+/* filters */
+.filters{display:grid;gap:14px;margin-top:20px}
+.pills{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-ms-overflow-style:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex:none;border:1px solid var(--fg);background:transparent;border-radius:99px;padding:9px 20px;font-size:15px;cursor:pointer;white-space:nowrap;display:inline-flex;gap:8px;align-items:center}
+.pill .n{font-size:12px;color:var(--fg-3);font-variant-numeric:tabular-nums}
+.pill.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pill.on .n{color:rgba(255,255,255,.8)}
+.subs{display:flex;gap:8px;flex-wrap:wrap}
+.sub{border:0;background:var(--chip);color:var(--fg-2);border-radius:99px;padding:6px 14px;font-size:13px;cursor:pointer}
+.sub.on{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
+.bar .count{font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums}
+.bar .count b{color:var(--fg)}
+.bar .sp{flex:1}
+.sel{-webkit-appearance:none;appearance:none;border:1px solid var(--line);background-color:var(--surface);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23958a86' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:14px;border-radius:10px;padding:9px 42px 9px 14px;font-size:14px;cursor:pointer}
+.sel:focus{outline:none;border-color:var(--accent)}
+.reset{border:0;background:none;color:var(--accent);font-size:14px;cursor:pointer;padding:6px}
+
+/* moods */
+.moods{display:flex;align-items:center;gap:12px;min-width:0}
+.moods-label{flex:none;font-size:14px;font-weight:600;color:var(--fg-2)}
+.moods .pills{flex:1;min-width:0}
+.mood{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:99px;padding:8px 16px;font-size:14px;cursor:pointer;white-space:nowrap;transition:border-color .15s}
+.mood:hover{border-color:var(--accent)}
+.mood.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.mood-desc{margin:-4px 0 0;font-size:14px;color:var(--fg-2)}
+@media (max-width:600px){.moods{flex-direction:column;align-items:stretch;gap:8px}}
+
+/* quiz */
+.qchoose{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:880px;margin:0 auto}
+.qpick{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:30px;display:flex;flex-direction:column;gap:12px;text-align:left;cursor:pointer;min-width:0;transition:border-color .15s,transform .15s}
+.qpick:hover{border-color:var(--accent);transform:translateY(-2px)}
+.qpick .num{font-size:13px;color:var(--accent);letter-spacing:.12em;font-weight:600;text-transform:uppercase}
+.qpick h2{font-size:26px;font-weight:700}
+.qpick p{margin:0;color:var(--fg-2)}
+.qpick .btn{align-self:flex-start;margin-top:8px}
+.qrun{max-width:720px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:34px}
+.qtop{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums}
+.qnav{max-width:720px;margin:0 auto 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.qbackbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:99px;padding:9px 18px 9px 14px;font-size:14px;font-weight:600;cursor:pointer;transition:border-color .15s,color .15s}
+.qbackbtn svg{width:16px;height:16px}
+.qbackbtn[data-qback] svg{transform:rotate(180deg)}
+.qbackbtn:hover{border-color:var(--accent);color:var(--accent)}
+.qbar{height:6px;background:var(--chip);border-radius:99px;margin:12px 0 26px;overflow:hidden}
+.qbar span{display:block;height:100%;background:var(--accent);border-radius:inherit;transition:width .3s}
+.qq{font-size:clamp(20px,2.6vw,25px);font-weight:700;line-height:1.45;letter-spacing:-.01em;text-wrap:pretty;margin:0}
+.qopts{display:grid;gap:10px;margin-top:22px}
+.qopt{display:flex;gap:14px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--bg-2);border-radius:14px;padding:14px 16px;font-size:16px;cursor:pointer;width:100%;transition:border-color .15s}
+.qopt .k{width:30px;height:30px;border-radius:50%;background:var(--chip);color:var(--fg-2);display:grid;place-items:center;font-weight:600;font-size:14px;flex:none}
+.qopt:hover:not(:disabled){border-color:var(--accent)}
+.qopt:disabled{cursor:default}
+.qopt.dim{opacity:.55}
+.qopt.right{border-color:var(--good);background:var(--good-soft);opacity:1}
+.qopt.right .k{background:var(--good);color:#fff}
+.qopt.wrong{border-color:var(--bad);background:var(--bad-soft);opacity:1}
+.qopt.wrong .k{background:var(--bad);color:#fff}
+.qfeed{margin-top:20px;border-radius:16px;background:var(--bg-2);border:1px solid var(--line);padding:18px 20px}
+.qfeed b{display:block;margin-bottom:4px;font-size:16px}
+.qfeed b.ok{color:var(--good)}
+.qfeed b.no{color:var(--bad)}
+.qfeed p{margin:0;color:var(--fg-2)}
+.qhear{margin-top:14px;display:grid;gap:8px}
+.qhear span{font-size:13px;font-weight:600;color:var(--fg-2)}
+.qnext{margin-top:22px;display:flex;justify-content:flex-end}
+.qresult{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.qscore{font-size:clamp(56px,9vw,80px);font-weight:700;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
+.qresult h2{font-size:26px;font-weight:700}
+.qresult p{margin:0;color:var(--fg-2)}
+.qresult .actions{justify-content:center;margin-top:14px}
+@media (max-width:700px){.qchoose{grid-template-columns:1fr}.qrun{padding:24px 20px}.qpick{padding:24px}}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);padding:20px 20px 16px;display:flex;flex-direction:column;gap:12px;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s;min-width:0;text-align:left}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}
+.tags{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:26px}
+.badge{background:var(--chip);color:var(--fg-2);border-radius:99px;padding:3px 10px;font-size:13px}
+.tag2{font-size:14px;color:var(--fg-2)}
+.card h3{font-size:19px;font-weight:700;line-height:1.3;overflow-wrap:anywhere}
+.code{display:block;font-size:12px;color:var(--fg-3);font-weight:500;letter-spacing:.02em;margin-bottom:2px;font-variant-numeric:tabular-nums}
+.loc{display:flex;gap:6px;align-items:flex-start;font-size:14px;color:var(--fg-2);min-width:0}
+.loc svg{color:var(--accent);width:18px;height:18px;margin-top:1px}
+.loc span{overflow-wrap:anywhere}
+.loc .ko,.mini .ko{color:var(--fg-3)}
+.card .foot{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.src{font-size:12px;color:var(--fg-3)}
+.play{width:46px;height:46px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none;text-decoration:none;transition:background .15s,color .15s}
+.play:hover{background:var(--accent);color:#fff}
+.play svg{width:18px;height:18px;fill:currentColor;stroke:none;margin-left:3px}
+.more{display:flex;justify-content:center;margin-block:36px 10px}
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--fg-2)}
+.empty h3{color:var(--fg);font-size:20px;margin-bottom:8px}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;background:var(--overlay);display:grid;place-items:center;padding:20px;overflow-y:auto}
+.dialog{background:var(--surface);border-radius:22px;width:100%;max-width:640px;padding:34px 36px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:calc(100vh - 40px);overflow-y:auto}
+.x{position:absolute;right:20px;top:20px;border:0;background:none;color:var(--fg-3);cursor:pointer;padding:6px;display:flex}
+.x svg{width:20px;height:20px}
+.dialog h2{font-size:26px;font-weight:700}
+.dialog .intro{color:var(--fg-2);margin:10px 0 22px;font-size:15px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.form .full{grid-column:1/-1}
+.field{display:grid;gap:7px;min-width:0}
+.field label{font-size:14px;color:var(--fg)}
+.field label i{color:var(--accent);font-style:normal}
+.field .hint{font-size:13px;color:var(--fg-3);line-height:1.5}
+.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface);width:100%}
+.field select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23958a86' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:14px;padding-right:42px}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
+.file{border:1px dashed var(--line);border-radius:12px;padding:12px;text-align:center;cursor:pointer;font-size:14px;color:var(--fg)}
+.file:hover{border-color:var(--accent)}
+.note{font-size:13px;color:var(--fg-2);background:var(--accent-soft);border-radius:12px;padding:12px 14px}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:10px 22px;margin:22px 0;font-size:14px}
+.dl dt{color:var(--fg-3)}
+.dl dd{margin:0;overflow-wrap:anywhere}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.related{margin-top:26px;border-top:1px solid var(--line);padding-top:18px}
+.related h4{margin:0 0 10px;font-size:14px;color:var(--fg-2);font-weight:600}
+.rel{display:flex;flex-wrap:wrap;gap:8px}
+.rel button{border:1px solid var(--line);background:var(--bg-2);border-radius:99px;padding:6px 14px;font-size:14px;cursor:pointer}
+.rel button:hover{border-color:var(--accent);color:var(--accent)}
+
+/* pages */
+.page-head{text-align:center;padding-block:64px 30px}
+.page-head h1{font-size:clamp(34px,5vw,48px);font-weight:700}
+.page-head p{color:var(--fg-2);margin-top:14px;font-size:16px}
+.mission{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;margin-top:30px}
+.mission img{width:100%;border-radius:22px;aspect-ratio:3/2;object-fit:cover;display:block}
+.mission h2{font-size:36px;font-weight:700;margin-bottom:18px}
+.mission p{margin:0 0 16px;max-width:62ch}
+section.block{padding-block:80px 0;text-align:center}
+section.block h2{font-size:36px;font-weight:700}
+section.block>p{max-width:520px;margin:16px auto 0;color:var(--fg)}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:36px}
+.feat{background:var(--surface);border-radius:var(--r-card);padding:26px 24px;text-align:center}
+.feat .ico{width:52px;height:52px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;margin:0 auto 18px}
+.feat .ico svg{width:26px;height:26px}
+.feat h3{font-size:16px;font-weight:600;margin-bottom:10px;letter-spacing:0}
+.feat p{margin:0;font-size:14px;color:var(--fg-2)}
+blockquote{max-width:600px;margin:36px auto 0;font-size:clamp(22px,3vw,28px);line-height:1.4;position:relative;padding-inline:30px;letter-spacing:-.01em}
+blockquote:before,blockquote:after{color:var(--fg);font-size:42px;position:absolute;line-height:1;font-weight:700}
+blockquote:before{content:"\201C";left:-4px;top:-6px}
+blockquote:after{content:"\201D";right:0;bottom:-26px}
+.team{background:var(--surface);border-radius:var(--r-card);display:grid;grid-template-columns:220px 1fr;gap:36px;padding:34px;max-width:800px;margin:36px auto 0;text-align:left;align-items:center}
+.team .who{text-align:center}
+.team img{width:150px;height:150px;border-radius:50%;object-fit:cover}
+.team .who h3{font-size:22px;font-weight:600;margin-top:16px}
+.team .who span{color:var(--accent);font-size:13px}
+.team p{margin:0 0 14px;font-size:14px;color:var(--fg-2)}
+.sources{max-width:800px;margin:36px auto 0;text-align:left;background:var(--surface);border-radius:var(--r-card);padding:26px 30px;font-size:14px;color:var(--fg-2)}
+.sources h3{font-size:16px;color:var(--fg);margin-bottom:8px;letter-spacing:0}
+.sources p{margin:0 0 8px}
+
+.today{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin-top:10px}
+.feature{background:var(--surface);border-radius:24px;padding:38px;display:flex;flex-direction:column;gap:16px;border:1px solid var(--line);min-width:0}
+.feature .date{font-size:13px;letter-spacing:.14em;font-weight:600;color:var(--accent);text-transform:uppercase;font-variant-numeric:tabular-nums}
+.feature h2{font-size:clamp(30px,4vw,44px);font-weight:700;line-height:1.15;overflow-wrap:anywhere}
+.feature .about{color:var(--fg-2);max-width:56ch;margin:0}
+.picks{display:grid;gap:12px;align-content:start}
+.picks h3{font-size:15px;font-weight:600;color:var(--fg-2);letter-spacing:0;margin:4px 0 2px}
+.mini{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;text-align:left;width:100%;min-width:0}
+.mini:hover{border-color:var(--accent)}
+.mini .t{flex:1;min-width:0}
+.mini strong{display:block;font-size:16px;overflow-wrap:anywhere}
+.mini small{color:var(--fg-2);font-size:13px}
+.mini .play{width:38px;height:38px}
+.mini .play svg{width:14px;height:14px}
+
+/* shorts (Google Drive embeds, scaled from a 540x960 base) */
+.shorts{display:flex;flex-wrap:wrap;justify-content:center;gap:18px}
+.short-item{width:min(100%,300px);display:flex;flex-direction:column;gap:12px}
+.short-wrap{width:100%;aspect-ratio:9/16;max-width:100%;border-radius:16px;overflow:hidden;background:#000}
+.short-cap{min-width:0}
+a.mini{text-decoration:none;color:inherit}
+.short-wrap video{display:block;width:100%;height:100%;object-fit:contain;background:#000}
+.short-wrap video:fullscreen{object-fit:contain}
+.short-wrap video:-webkit-full-screen{object-fit:contain}
+.sec-title{font-size:clamp(34px,5vw,48px);font-weight:700;margin:96px 0 36px;text-align:center}
+footer{margin-top:90px;padding-block:30px 40px;font-size:14px;color:var(--fg-2);border-top:1px solid var(--line)}
+footer .wrap{display:flex;gap:10px 24px;flex-wrap:wrap;justify-content:space-between}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:14px;z-index:60}
+
+@media (max-width:1050px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:820px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mission,.today{grid-template-columns:1fr}
+  .three{grid-template-columns:1fr}
+  .team{grid-template-columns:1fr;text-align:center}
+  .links{gap:28px;margin-left:16px}
+}
+@media (max-width:600px){
+  .wrap{padding-inline:16px}
+  .grid{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr}
+  .dialog{padding:28px 22px}
+  .feature{padding:26px}
+  .hero{padding-block:44px 30px}
+}
+.burger{display:none;place-items:center;width:44px;height:44px;border:1px solid var(--line);background:var(--surface);border-radius:12px;cursor:pointer;color:var(--fg)}
+.burger svg{width:22px;height:22px;stroke-width:1.2}
+.mmenu{position:fixed;inset:0;z-index:40;background:var(--bg);padding:env(safe-area-inset-top,0px) 20px calc(28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;overflow-y:auto}
+.mtop{display:flex;align-items:center;justify-content:space-between;height:72px;flex:none}
+.mclose{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--fg);display:grid;place-items:center;cursor:pointer}
+.mclose svg{width:20px;height:20px;stroke-width:1.2}
+.seg{display:flex;gap:4px;padding:4px;background:var(--chip);border-radius:12px;margin-top:8px}
+.seg button{flex:1;border:0;background:transparent;color:var(--fg-2);padding:10px 8px;border-radius:9px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.seg button svg{width:16px;height:16px}
+.seg button.on{background:var(--surface);color:var(--fg);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.mlinks{display:flex;flex-direction:column;margin-top:18px}
+.mlinks a,.mlinks button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;text-decoration:none;font-size:22px;font-weight:500;color:var(--fg);padding:20px 2px;background:none;border:0;border-bottom:1px solid var(--line);cursor:pointer;letter-spacing:-.01em}
+.mlinks a svg,.mlinks button svg{width:22px;height:22px;color:var(--fg-3);stroke-width:1.5}
+.mlinks a.on{color:var(--accent)}
+.mlinks a.on svg{color:var(--accent)}
+.mfoot{margin-top:auto;padding-top:28px}
+.mfoot .seg{margin-top:0}
+@media (max-width:860px){.links,.nav .lang,.nav .theme,.nav #contribBtn{display:none}.nav .burger{display:grid}}
+@media (min-width:861px){.mmenu{display:none!important}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L7.5 3.64A1 1 0 0 0 6 4.5Z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 3v5h8V3"/><circle cx="12" cy="15" r="2.5"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><circle cx="17" cy="8" r="3.2"/><path d="M17 14a6 6 0 0 1 5 6"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <nav class="nav">
+      <a class="logo" href="/" data-route="home"><svg class="i"><use href="#i-note"/></svg>SoneVault</a>
+      <div class="links">
+        <a href="/about" data-route="about" data-i18n="navAbout"></a>
+        <a href="/today" data-route="today" data-i18n="navToday"></a>
+        <a href="/quiz" data-route="quiz" data-i18n="navQuiz"></a>
+      </div>
+      <div class="sp"></div>
+      <button class="theme" id="themeBtn" type="button" aria-label="Toggle dark mode"><svg class="i"><use href="#i-moon"/></svg></button>
+      <button class="lang" id="langBtn" type="button"><svg class="i"><use href="#i-globe"/></svg><span id="langLabel"></span></button>
+      <button class="btn" id="contribBtn" type="button"><svg class="i"><use href="#i-plus"/></svg><span data-i18n="contribute"></span></button>
+      <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mmenu"><svg class="i"><use href="#i-menu"/></svg></button>
+    </nav>
+    <div class="mmenu" id="mmenu" hidden role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="mtop">
+        <a class="logo" href="/" data-route="home"><svg class="i"><use href="#i-note"/></svg>SoneVault</a>
+        <button class="mclose" id="mclose" type="button" aria-label="Close menu"><svg class="i"><use href="#i-x"/></svg></button>
+      </div>
+      <div class="seg" role="group" aria-label="Language">
+        <button type="button" data-setlang="ko">한국어</button>
+        <button type="button" data-setlang="en">English</button>
+      </div>
+      <nav class="mlinks">
+        <a href="/" data-route="home"><span data-i18n="navArchive"></span><svg class="i"><use href="#i-arrow"/></svg></a>
+        <a href="/about" data-route="about"><span data-i18n="navAbout"></span><svg class="i"><use href="#i-arrow"/></svg></a>
+        <a href="/today" data-route="today"><span data-i18n="navToday"></span><svg class="i"><use href="#i-arrow"/></svg></a>
+        <a href="/quiz" data-route="quiz"><span data-i18n="navQuiz"></span><svg class="i"><use href="#i-arrow"/></svg></a>
+        <button type="button" id="contribBtnM"><span data-i18n="contribute"></span><svg class="i"><use href="#i-arrow"/></svg></button>
+      </nav>
+      <div class="mfoot">
+        <div class="seg" role="group" aria-label="Theme">
+          <button type="button" data-settheme="light"><svg class="i"><use href="#i-sun"/></svg><span data-i18n="light"></span></button>
+          <button type="button" data-settheme="dark"><svg class="i"><use href="#i-moon"/></svg><span data-i18n="dark"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ARCHIVE -->
+  <div id="page-home" class="wrap">
+    <section class="hero">
+      <span class="eyebrow"><svg class="i"><use href="#i-globe"/></svg>SONEVAULT</span>
+      <h1 id="heroTitle"></h1>
+      <p class="lede" data-i18n="heroLede"></p>
+      <div class="search">
+        <svg class="i"><use href="#i-search"/></svg>
+        <input id="q" type="search" autocomplete="off" data-i18n-ph="searchPh">
+        <button class="clr" id="qClear" type="button" hidden aria-label="Clear"><svg class="i"><use href="#i-x"/></svg></button>
+      </div>
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <div class="filters">
+      <div class="moods">
+        <span class="moods-label" data-i18n="moodLabel"></span>
+        <div class="pills" id="moodPills" role="group"></div>
+      </div>
+      <p class="mood-desc" id="moodDesc" hidden></p>
+      <div class="pills" id="catPills"></div>
+      <div class="subs" id="subChips" hidden></div>
+      <div class="bar">
+        <span class="count" id="count"></span>
+        <button class="reset" id="resetBtn" type="button" hidden data-i18n="reset"></button>
+        <span class="sp"></span>
+        <select class="sel" id="provSel" aria-label="Region"></select>
+        <select class="sel" id="sortSel" aria-label="Sort"></select>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    <div class="more"><button class="btn ghost" id="moreBtn" type="button" hidden></button></div>
+  </div>
+
+  <!-- ABOUT -->
+  <div id="page-about" class="wrap" hidden>
+    <div class="page-head">
+      <h1 id="aboutTitle"></h1>
+      <p data-i18n="aboutSub"></p>
+    </div>
+    <div class="mission">
+      <img src="/images/about.webp" alt="Reel-to-reel tapes and cassettes stacked in front of a turntable">
+      <div>
+        <h2 id="missionTitle"></h2>
+        <p data-i18n="mission1"></p>
+        <p><strong data-i18n="mission2"></strong></p>
+        <p data-i18n="mission3"></p>
+      </div>
+    </div>
+    <section class="block">
+      <h2 id="doTitle"></h2>
+      <p data-i18n="doSub"></p>
+      <div class="three">
+        <div class="feat"><div class="ico"><svg class="i"><use href="#i-save"/></svg></div><h3 data-i18n="f1t"></h3><p data-i18n="f1"></p></div>
+        <div class="feat"><div class="ico"><svg class="i"><use href="#i-users"/></svg></div><h3 data-i18n="f2t"></h3><p data-i18n="f2"></p></div>
+        <div class="feat"><div class="ico"><svg class="i"><use href="#i-book"/></svg></div><h3 data-i18n="f3t"></h3><p data-i18n="f3"></p></div>
+      </div>
+    </section>
+    <section class="block">
+      <h2 id="whyTitle"></h2>
+      <blockquote data-i18n="quote"></blockquote>
+    </section>
+    <section class="block">
+      <h2 id="teamTitle"></h2>
+      <div class="team">
+        <div class="who">
+          <img src="/images/profile.webp" alt="">
+          <h3 data-i18n="founderName"></h3>
+          <span>Founder &amp; CEO</span>
+        </div>
+        <div><p data-i18n="bio1"></p><p data-i18n="bio2"></p></div>
+      </div>
+      <div class="sources">
+        <h3 data-i18n="srcTitle"></h3>
+        <p data-i18n="src1"></p>
+        <p data-i18n="src2"></p>
+      </div>
+    </section>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="page-quiz" class="wrap" hidden>
+    <div class="page-head">
+      <h1 id="quizTitle"></h1>
+      <p data-i18n="quizSub"></p>
+    </div>
+    <div id="quizBox"></div>
+  </div>
+
+  <!-- TODAY -->
+  <div id="page-today" class="wrap" hidden>
+    <div class="page-head">
+      <h1 id="todayTitle"></h1>
+      <p data-i18n="todaySub"></p>
+    </div>
+    <div class="shorts" id="shorts"></div>
+    <h2 class="sec-title" id="pickTitle"></h2>
+    <div class="today" id="todayBox"></div>
+  </div>
+</main>
+
+<footer><div class="wrap"><span>© SoneVault 2026. All Rights Reserved.</span><span data-i18n="footSrc"></span></div></footer>
+
+<!-- Detail modal -->
+<div class="modal" id="detail" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <button class="x" type="button" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
+    <div class="tags" id="dTags"></div>
+    <h2 id="dTitle" style="margin-top:14px"></h2>
+    <p class="intro" id="dAbout" style="margin-bottom:0"></p>
+    <dl class="dl" id="dList"></dl>
+    <div class="actions">
+      <a class="btn" id="dListen" target="_blank" rel="noopener"><svg class="i"><use href="#i-ext"/></svg><span data-i18n="listen"></span></a>
+      <button class="btn ghost" id="dCopy" type="button"><svg class="i"><use href="#i-link"/></svg><span data-i18n="copyLink"></span></button>
+    </div>
+    <div class="related" id="dRelWrap"><h4 id="dRelTitle"></h4><div class="rel" id="dRel"></div></div>
+  </div>
+</div>
+
+<!-- Contribute modal -->
+<div class="modal" id="contrib" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="cTitle">
+    <button class="x" type="button" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
+    <h2 id="cTitle" data-i18n="contribute"></h2>
+    <p class="intro" data-i18n="cIntro"></p>
+    <form class="form" id="cForm" novalidate>
+      <div class="field full">
+        <label for="cUrl"><span data-i18n="cUrl"></span> <i>*</i></label>
+        <input id="cUrl" name="url" type="url" required>
+        <small class="hint" data-i18n="cUrlHint"></small>
+      </div>
+      <div class="field"><label for="cName"><span data-i18n="cName"></span> <i>*</i></label><input id="cName" name="title" required></div>
+      <div class="field"><label for="cCat"><span data-i18n="cCat"></span> <i>*</i></label><select id="cCat" name="category" required></select></div>
+      <div class="field"><label for="cRegion"><span data-i18n="cRegion"></span> <i>*</i></label><input id="cRegion" name="region" required></div>
+      <div class="field"><label for="cCountry"><span data-i18n="cCountry"></span> <i>*</i></label><input id="cCountry" name="country" required></div>
+      <div class="field full"><label for="cEmail" data-i18n="cEmail"></label><input id="cEmail" name="email" type="email"></div>
+      <input type="text" name="website" id="cHp" tabindex="-1" autocomplete="off" hidden aria-hidden="true">
+      <div class="note full" id="cMsg" hidden></div>
+      <button class="btn full" type="submit" id="cSubmit" data-i18n="submit" style="margin-top:10px"></button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ---------- settings ---------- */
+// Firebase: contributions are saved to Firestore (collection "submissions", status "pending").
+// Review them in the Firebase console.
+const firebaseConfig = {
+  apiKey: "AIzaSyB6MksMuGtGD8ygb8myzKTQqs1PYEkV_yE",
+  authDomain: "sonevault-ff608.firebaseapp.com",
+  projectId: "sonevault-ff608",
+  storageBucket: "sonevault-ff608.firebasestorage.app",
+  messagingSenderId: "766022902567",
+  appId: "1:766022902567:web:4984d7bc7f9be28e74bf02"
+};
+let fb = null;
+try{ if(window.firebase){ firebase.initializeApp(firebaseConfig); fb = { db: firebase.firestore() }; } }catch(e){ fb = null; }
+const PAGE_SIZE = 48;
+// Today's Sound shorts: video files in the videos/ folder, newest first.
+// To add one, put short-3.mp4 (and a short-3.jpg cover image) in videos/ and add it below,
+// with the Urisori link of the sound it features.
+const VIDEO_BASE = '/videos/';
+const SHORTS = [
+  { video: 'short-1', sound: 'https://urisori.co.kr/urisori-origin/doku.php?id=gg:gapyeong:gapyeong-0102' },
+  { video: 'short-2', sound: 'https://urisori.co.kr/urisori-origin/doku.php?id=gw:gw.goseong:gw.goseong-0909' }
+];
+
+/* ---------- text ---------- */
+const CAT_EN = {'노동요':'Labor Songs (Nodongyo)','의례요':'Ceremonial Songs (Uiryeyo)','유흥요':'Entertainment Songs (Yuheungyo)','한탄요':'Lament / Sorrow Songs (Hantanyo)','원본 녹음':'Original Recordings'};
+const CAT_SHORT_EN = {'노동요':'Labor','의례요':'Ceremonial','유흥요':'Entertainment','한탄요':'Lament','원본 녹음':'Original'};
+const CAT_ABOUT = {
+  '노동요':{ko:'일하며 부르던 노래입니다. 논매기, 고기잡이, 집짓기, 길쌈처럼 여럿이 함께하는 일의 박자를 맞추고 힘든 노동을 견디게 해 주었습니다.',en:'Songs sung while working. Farming, fishing, building and weaving songs kept a group in rhythm and made hard labor easier to bear.'},
+  '의례요':{ko:'장례, 세시 풍속 등 의례에서 부르던 노래입니다. 공동체가 삶의 큰 순간을 함께 지나는 방식이 담겨 있습니다.',en:'Songs for rituals such as funerals and seasonal rites. They show how a village marked life\'s big moments together.'},
+  '유흥요':{ko:'놀이와 모임에서 부르던 노래입니다. 명절 놀이, 소리판, 심심풀이 노래와 동요가 포함됩니다.',en:'Songs for play and gatherings: holiday games, singing sessions, pastime songs and children\'s songs.'},
+  '한탄요':{ko:'고된 삶과 시집살이의 설움을 풀어낸 노래입니다. 개인의 목소리로 시대의 삶을 전합니다.',en:'Laments about hardship and married life, telling the story of an era through one person\'s voice.'},
+  '원본 녹음':{ko:'편집하지 않은 현지 녹음 원본입니다. 한 번의 녹음에 여러 곡이 이어지기도 합니다.',en:'Unedited field recordings, exactly as captured in the village. One session may hold several songs.'}
+};
+const SUB_EN = {'가사노동요':'Household work songs','광업노동요':'Mining songs','기타의례요':'Other ritual songs','농업노동요':'Farming songs','동요':'Children\'s songs','미분류':'Unclassified','벌채노동요':'Logging songs','세시놀이노래':'Seasonal play songs','세시의례요':'Seasonal ritual songs','소리판노래':'Singing-session songs','수공노동요':'Handicraft songs','시집살이한탄요':'Married-life laments','신세한탄요':'Personal laments','심심풀이노래':'Pastime songs','어업노동요':'Fishing songs','운수노동요':'Transport songs','일반놀이노래':'Play songs','장례요':'Funeral songs','토건노동요':'Construction songs','행악':'Processional music'};
+const PROV_EN = {'경북':'North Gyeongsang','강원':'Gangwon','경남':'South Gyeongsang','전남':'South Jeolla','경기':'Gyeonggi','대구':'Daegu','광주':'Gwangju','전북':'North Jeolla','충남':'South Chungcheong','충북':'North Chungcheong','기타':'Other'};
+
+const T = {
+ko:{langLabel:'EN',light:'라이트',dark:'다크',themeToDark:'다크 모드로 전환',themeToLight:'라이트 모드로 전환',dOrig:'원제',navArchive:'아카이브',navAbout:'소개',navToday:'오늘의 소리',navQuiz:'퀴즈',contribute:'참여하기',
+ moodLabel:'기분으로 찾기',
+ moods:{comfort:'위로가 필요할 때',motivate:'힘을 내고 싶을 때',funny:'웃고 싶을 때',happy:'기분 좋은 날',sad:'마음이 울적할 때'},
+ moodDesc:{comfort:'아이를 달래던 소리와 복을 비는 소리로 마음을 토닥여 보세요.',motivate:'힘을 모아 일하던 사람들의 힘찬 소리를 들어 보세요.',funny:'방귀, 이, 영감님까지. 웃음이 터지는 익살스러운 노래들이에요.',happy:'명절 놀이와 잔치 자리에서 부르던 신나는 노래들이에요.',sad:'고된 삶과 이별을 담아낸 구슬픈 노래들이에요.'},
+ quizTitle:'소리 <span class="ac">퀴즈</span>',quizSub:'가볍게 풀어 보는 우리 소리 상식 퀴즈',
+ qCount:(n)=>`${n}문제`,qStart:'시작하기',qBack:'퀴즈 목록',qRight:'정답이에요!',qWrong:(a)=>`아쉬워요. 정답은 '${a}'예요.`,qNext:'다음 문제',qFinish:'결과 보기',qHear:'실제 녹음 들어 보기',
+ qScoreOf:(s,n)=>`${n}문제 중 ${s}문제를 맞혔어요`,qShare:'결과 공유하기',qShareText:(q,s,n)=>`SoneVault 소리 퀴즈 '${q}'에서 ${n}문제 중 ${s}문제를 맞혔어요! 나도 도전해 보세요.`,qCopied:'공유 문구와 링크를 복사했어요',qAgain:'다시 풀기',qOther:'다른 퀴즈 풀기',qArchive:'아카이브 둘러보기',
+ qTiers:['괜찮아요, 이제 시작이에요!','좋아요! 조금만 더 들어 볼까요?','아주 잘했어요!','완벽해요! 소리 박사네요.'],
+ heroTitle:'세상의 <span class="ac">소리</span>',heroLede:'전 세계의 인간적 표현을 모은 협업 플랫폼입니다. 잊혀진 언어, 지역 방언, 전통 민요를 발견해 보세요.',
+ searchPh:'제목, 지역 또는 유형으로 검색...',stats:(n,v,p)=>`<span><b>${n}</b>개의 소리</span><span><b>${v}</b>개 마을</span><span><b>${p}</b>개 시·도</span>`,
+ all:'전체',allProv:'모든 지역',allSub:'전체',sortDefault:'기본 순서',sortAZ:'가나다순',sortRegion:'지역순',
+ count:(n)=>`<b>${n}</b>개의 소리`,reset:'필터 초기화',more:(n)=>`더 보기 (${n}개 남음)`,
+ emptyT:'검색 결과가 없습니다',emptyP:'다른 검색어를 입력하거나 필터를 초기화해 보세요.',
+ source:'출처: 우리소리',listen:'원본에서 듣기',copyLink:'링크 복사',copied:'링크를 복사했습니다',
+ dCat:'분류',dSub:'세부 분류',dRegion:'녹음 지역',dCountry:'국가',dSource:'출처',dCode:'녹음 번호',country:'대한민국',
+ relTitle:(r)=>`같은 마을의 다른 소리 · ${r}`,
+ aboutTitle:'SoneVault <span class="ac">소개</span>',aboutSub:'인류의 표현을 담은 세계적 아카이브',missionTitle:'우리의 <span class="ac">사명</span>',
+ mission1:'세상에서 사용되는 모든 언어, 외딴 들녘에서 흥얼거리는 노래 한 자락, 지역마다 고유한 표현에는 한 문화의 DNA가 담겨 있습니다. 하지만 세계가 더욱 긴밀하게 연결될수록, 이처럼 서로 다른 목소리들은 시간의 흐름 속에서 점차 사라지고 있습니다.',
+ mission2:'SoneVault는 이 목소리들이 결코 잊히지 않도록 존재합니다.',
+ mission3:'우리는 세계 곳곳의 다채로운 인류 표현을 수집하고 보존하는 참여형 아카이브입니다. 소멸 위기에 놓인 방언부터 여러 세대에 걸쳐 전해져 온 전통 민요까지, 우리를 우리답게 만드는 소리와 이야기가 머물 수 있는 디지털 공간을 제공합니다.',
+ doTitle:'우리가 하는 <span class="ac">일</span>',doSub:'문화유산은 먼지 쌓인 지하실에 갇혀 있어서는 안 됩니다. 누구나 쉽게 접근하고 검색하며 함께 향유할 수 있어야 합니다.',
+ f1t:'디지털 보존',f1:'구전 역사와 지역의 농요, 언어의 섬세한 특징들이 사라지기 전에 현대 기술을 활용해 기록하고 보존합니다.',
+ f2t:'공동체와의 협력',f2:'SoneVault는 모두가 함께 만들어 가는 프로젝트입니다. 언어학자와 역사학자는 물론, 일상 속에서 문화를 지켜 온 모든 분이 자신의 녹음 자료와 지식을 공유할 수 있습니다.',
+ f3t:'교육을 통한 확산',f3:'이 자료들을 누구나 이용할 수 있도록 공개함으로써, 다음 세대가 자신의 뿌리와 다시 연결되고 세계 문화의 깊고 풍부한 다양성을 이해하도록 돕습니다.',
+ whyTitle:'이것이 <span class="ac">중요한</span> 이유',quote:'사라져 가는 소중한 유산을 기록하는 일은 단순히 과거를 돌아보는 데 그치지 않습니다. 우리는 이를 통해 미래를 더욱 풍요롭게 만들어 갑니다.',
+ teamTitle:'<span class="ac">팀</span> 소개',founderName:'곽준영',
+ bio1:'곽준영은 전 세계에서 사라져 가는 소리를 보존하고 공유하는 글로벌 디지털 플랫폼인 \'SoneVault\'의 설립자입니다. 문화적 전통, 소멸 위기의 언어, 자연의 음향 경관이 급격히 사라져 가는 것에 영감을 받아, 이러한 소리들이 잊히지 않고 미래 세대에게 이어질 수 있도록 이 플랫폼을 만들었습니다.',
+ bio2:'빠르게 변화하는 디지털 환경에서 자란 그는 의미 있는 문화적 요소들이 눈에 띄지 않게 얼마나 쉽게 사라질 수 있는지 깊이 실감했습니다. 기술이 종종 변화를 가속화하기도 하지만, 그는 기술을 보존과 연결을 위한 도구로 활용할 수 있는 기회를 보았습니다. 이 플랫폼은 단순히 소리를 기록하는 것에 그치지 않고, 사람들이 직접 소리를 경험하고 이해할 수 있도록 해야 한다는 생각에서 구축되었습니다.',
+ srcTitle:'자료 출처',src1:'현재 아카이브의 녹음은 한국 민요 아카이브 우리소리(urisori.co.kr)에 공개된 자료를 바탕으로 정리했습니다. 각 소리의 재생 버튼을 누르면 원본 페이지로 이동하며, 모든 권리는 원 저작권자에게 있습니다.',
+ src2:'SoneVault는 이 자료들을 지역, 분류, 세부 유형별로 정리해 학생과 일반인이 더 쉽게 찾고 이해할 수 있도록 돕습니다. 자료에 대한 정정이나 삭제 요청은 언제든 환영합니다.',
+ todayTitle:'오늘의 <span class="ac">소리</span>',todaySub:'민요부터 방언까지, 잊혀 가는 소리를 가볍고 재미있게 만나 보세요.',
+ todayLabel:(d)=>`오늘의 소리 · ${d}`,alsoToday:'함께 들어 볼 소리',footSrc:'녹음 자료 출처: 우리소리 (urisori.co.kr)',
+ cIntro:'다양한 문화의 소리, 노래, 또는 방언을 소개해 주세요. *표시가 있는 항목은 필수 입력 사항입니다.',
+ cUrl:'오디오 링크',cUrlHint:'구글 드라이브, 유튜브, 사운드클라우드 등에 올린 뒤 링크를 붙여 넣어 주세요. 구글 드라이브는 공유 설정을 \'링크가 있는 모든 사용자\'로 바꿔 주세요.',cName:'제목',cCat:'카테고리',cRegion:'지역',cCountry:'나라',cEmail:'이메일 (선택, 회신용)',submit:'제출',
+ cPickCat:'선택하세요',cMissing:'필수 항목을 모두 입력해 주세요.',cNeedAudio:'오디오 링크를 넣어 주세요.',cBadUrl:'올바른 링크가 아닙니다. https://로 시작하는 주소를 넣어 주세요.',
+ cNotConnected:'제출 기능을 불러오지 못했습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.',cSending:'제출 중...',cSent:'제출되었습니다. 검토 후 아카이브에 추가하겠습니다.',cFail:'제출하지 못했습니다. 잠시 후 다시 시도해 주세요.'},
+en:{langLabel:'KO',light:'Light',dark:'Dark',themeToDark:'Switch to dark mode',themeToLight:'Switch to light mode',dOrig:'Original title',navArchive:'Archive',navAbout:'About Us',navToday:'Today\'s Sound',navQuiz:'Quiz',contribute:'Contribute',
+ moodLabel:'Browse by mood',
+ moods:{comfort:'Encouraging',motivate:'Motivational',funny:'Funny',happy:'Happy',sad:'Sad & gloomy'},
+ moodDesc:{comfort:'Soothing baby songs and blessing songs for when you need a little reassurance.',motivate:'Rousing work songs from people pulling together.',funny:'Playful songs about farts, lice and grumpy old men.',happy:'Bright songs from holidays, games and village parties.',sad:'Mournful songs about hard lives and goodbyes.'},
+ quizTitle:'Sound <span class="ac">Quiz</span>',quizSub:'Two quick, just-for-fun quizzes about Korea\'s traditional sounds.',
+ qCount:(n)=>`${n} questions`,qStart:'Start',qBack:'All quizzes',qRight:'Correct!',qWrong:(a)=>`Not quite. The answer is "${a}".`,qNext:'Next question',qFinish:'See results',qHear:'Hear a real recording',
+ qScoreOf:(s,n)=>`You got ${s} out of ${n} right`,qShare:'Share my score',qShareText:(q,s,n)=>`I got ${s}/${n} on the SoneVault "${q}" quiz! Can you beat me?`,qCopied:'Copied your score and the link',qAgain:'Try again',qOther:'Try the other quiz',qArchive:'Explore the archive',
+ qTiers:['Nice try! This is just the beginning.','Good job! Want to listen to a few more?','Great work!','Perfect! You\'re a sound expert.'],
+ heroTitle:'Voices of the <span class="ac">Earth</span>',heroLede:'A collaborative platform gathering human expression from across the world. Discover forgotten languages, regional dialects, and traditional folk songs.',
+ searchPh:'Search by title, region, or type...',stats:(n,v,p)=>`<span><b>${n}</b> recordings</span><span><b>${v}</b> villages</span><span><b>${p}</b> provinces</span>`,
+ all:'All',allProv:'All regions',allSub:'All',sortDefault:'Default order',sortAZ:'Title (A–Z)',sortRegion:'Region',
+ count:(n)=>`<b>${n}</b> sounds`,reset:'Clear filters',more:(n)=>`Show more (${n} left)`,
+ emptyT:'No sounds found',emptyP:'Try a different search term or clear the filters.',
+ source:'Source: Urisori',listen:'Listen at source',copyLink:'Copy link',copied:'Link copied',
+ dCat:'Category',dSub:'Type',dRegion:'Recorded in',dCountry:'Country',dSource:'Source',dCode:'Recording no.',country:'South Korea',
+ relTitle:(r)=>`More from this village · ${r}`,
+ aboutTitle:'About <span class="ac">SoneVault</span>',aboutSub:'The global archive of human expression',missionTitle:'Our <span class="ac">Mission</span>',
+ mission1:'Every language spoken, every song hummed in a remote field, and every unique regional idiom carries the DNA of a culture. However, as the world becomes more connected, these distinct voices are often silenced by the passage of time.',
+ mission2:'Our platform exists to ensure they are never forgotten.',
+ mission3:'We are a collaborative, living archive dedicated to gathering and preserving the diverse tapestry of human expression from every corner of the globe. From endangered dialects to traditional folk songs that have been passed down through generations, we provide a digital home for the sounds and stories that define who we are.',
+ doTitle:'What We <span class="ac">Do</span>',doSub:'We believe that cultural heritage shouldn\'t be locked away in a dusty basement. It should be accessible, searchable, and celebrated.',
+ f1t:'Digital Preservation',f1:'We utilize modern technology to record and archive oral histories, regional agricultural songs, and linguistic nuances before they disappear.',
+ f2t:'Community Collaboration',f2:'This is a shared effort. We invite linguists, historians, and everyday cultural guardians to contribute their own recordings and knowledge.',
+ f3t:'Educational Outreach',f3:'By making these resources available to the public, we help the next generation reconnect with their roots and understand the profound depth of global diversity.',
+ whyTitle:'Why It <span class="ac">Matters</span>',quote:'By documenting these vanishing treasures, we aren\'t just looking at the past. We are enriching the future.',
+ teamTitle:'Our <span class="ac">Team</span>',founderName:'Jon Young Kwok',
+ bio1:'Jon Young Kwok is the founder of SoneVault, a global digital platform dedicated to preserving and sharing disappearing sounds from around the world. Inspired by the rapid loss of cultural traditions, endangered languages, and natural soundscapes, he created the platform to ensure that these sounds are not forgotten, but instead made accessible to future generations.',
+ bio2:'Growing up in a fast-changing, digital environment, Jon became increasingly aware of how easily meaningful aspects of culture can fade without notice. While technology often accelerates change, he saw an opportunity to use it as a tool for preservation and connection. The platform was built on this idea: not just to archive sounds, but to allow people to experience and understand them.',
+ srcTitle:'Where the recordings come from',src1:'The recordings in the archive are drawn from Urisori (urisori.co.kr), a public archive of Korean folk songs. Each play button opens the original page, and all rights remain with the original rights holders.',
+ src2:'SoneVault organizes these materials by region, category and type so that students and the public can find and understand them more easily. Corrections and removal requests are always welcome.',
+ todayTitle:'Today\'s <span class="ac">Sound</span>',todaySub:'From folk songs to dialects, meet a disappearing sound every day.',
+ todayLabel:(d)=>`Today's sound · ${d}`,alsoToday:'Also worth a listen',footSrc:'Recordings courtesy of Urisori (urisori.co.kr)',
+ cIntro:'Share a sound, song, or dialect from your culture. Fields marked with * are required.',
+ cUrl:'Audio link',cUrlHint:'Upload your recording to Google Drive, YouTube, SoundCloud or similar, then paste the link. For Google Drive, set sharing to "Anyone with the link".',cName:'Title',cCat:'Category',cRegion:'Region',cCountry:'Country',cEmail:'Email (optional, so we can reply)',submit:'Submit',
+ cPickCat:'Choose one',cMissing:'Please fill in all required fields.',cNeedAudio:'Add a link to the audio.',cBadUrl:'That doesn\'t look like a link. Paste an address starting with https://.',
+ cNotConnected:'Couldn\'t load the submission service. Refresh the page and try again.',cSending:'Submitting...',cSent:'Submitted. We\'ll review it and add it to the archive.',cFail:'Couldn\'t submit. Please try again in a moment.'}
+};
+
+/* ---------- state ---------- */
+let lang = 'ko';
+try{ const saved = localStorage.getItem('sv-lang'); if(saved==='ko'||saved==='en') lang = saved; }catch(e){}
+const S = {q:'', mood:'', cat:-1, sub:-1, prov:-1, sort:'default', shown:PAGE_SIZE};
+const MOODS = ['comfort','motivate','funny','happy','sad'];
+let D = null, ITEMS = [], filtered = [];
+const $ = s => document.querySelector(s);
+const t = k => T[lang][k];
+const fmt = n => n.toLocaleString(lang==='ko'?'ko-KR':'en-US');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const icon = id => `<svg class="i"><use href="#i-${id}"/></svg>`;
+
+/* ---------- data ---------- */
+fetch('/sounds.json').then(r=>r.json()).then(d=>{
+  D = d;
+  ITEMS = d.items.map((r,i)=>{
+    const [raw,c,s,rg,l,ni,codeEn] = r;
+    let code='', name=raw.trim();
+    const m = raw.match(/^(.+?-\d+)\s*\/\s*(.+)$/);
+    if(m){ code=m[1].trim(); name=m[2].trim(); }
+    const nameEn=d.namesEn[ni], regionEn=d.regionsEn[rg];
+    const cat=d.cats[c], sub=d.subs[s], region=d.regions[rg], pv=d.regionProv[rg], prov=d.provs[pv];
+    const key=(raw+nameEn+region+regionEn+sub+cat+CAT_EN[cat]+SUB_EN[sub]+PROV_EN[prov]+(codeEn||'')).toLowerCase().replace(/\s+/g,'');
+    return {i, name, nameEn, code, codeEn:codeEn||'', c, s, rg, pv, cat, sub, region, regionEn, prov, url:d.base+l, key};
+  });
+  buildStatic(); render(); route();
+}).catch(()=>{ $('#grid').innerHTML = `<div class="empty"><h3>Couldn't load the archive.</h3><p>Check that sounds.json is next to index.html.</p></div>`; });
+
+/* ---------- i18n ---------- */
+function applyLang(){
+  document.documentElement.lang = lang;
+  $('#langLabel').textContent = t('langLabel');
+  document.querySelectorAll('[data-setlang]').forEach(b=>b.classList.toggle('on', b.dataset.setlang===lang));
+  updateThemeUI();
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPh); });
+  ['heroTitle','aboutTitle','missionTitle','doTitle','whyTitle','teamTitle','todayTitle','quizTitle'].forEach(id=>{ $('#'+id).innerHTML = t(id); });
+  renderQuiz();
+  if(D){ buildStatic(); render(); renderToday(); }
+}
+function setMenu(open){ $('#mmenu').hidden=!open; document.body.style.overflow = open ? 'hidden' : ''; $('#burger').setAttribute('aria-expanded',open); if(open) $('#mclose').focus(); else $('#burger').focus(); }
+$('#burger').onclick = ()=>setMenu(true);
+$('#mclose').onclick = ()=>setMenu(false);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && !$('#mmenu').hidden) setMenu(false); });
+document.querySelectorAll('[data-setlang]').forEach(b=>b.onclick=()=>{ if(lang!==b.dataset.setlang) $('#langBtn').click(); });
+
+/* ---------- theme ---------- */
+const themeNow = ()=> document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+function updateThemeUI(){
+  const th = themeNow();
+  $('#themeBtn').innerHTML = icon(th==='dark' ? 'sun' : 'moon');
+  $('#themeBtn').setAttribute('aria-label', t(th==='dark' ? 'themeToLight' : 'themeToDark'));
+  $('#themeBtn').title = t(th==='dark' ? 'themeToLight' : 'themeToDark');
+  document.querySelectorAll('[data-settheme]').forEach(b=>b.classList.toggle('on', b.dataset.settheme===th));
+}
+function setTheme(th){ document.documentElement.setAttribute('data-theme', th); try{ localStorage.setItem('sv-theme', th); }catch(e){} updateThemeUI(); }
+$('#themeBtn').onclick = ()=>setTheme(themeNow()==='dark' ? 'light' : 'dark');
+document.querySelectorAll('[data-settheme]').forEach(b=>b.onclick=()=>setTheme(b.dataset.settheme));
+try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeUI); }catch(e){}
+window.addEventListener('resize', ()=>{ if(innerWidth>860 && !$('#mmenu').hidden) setMenu(false); });
+$('#mmenu').addEventListener('click', e=>{ if(e.target.closest('a')) setMenu(false); });
+$('#contribBtnM').onclick = ()=>{ setMenu(false); $('#contribBtn').click(); };
+$('#langBtn').onclick = ()=>{ lang = lang==='ko'?'en':'ko'; try{localStorage.setItem('sv-lang',lang)}catch(e){} applyLang(); };
+
+const catLabel = c => lang==='ko' ? c : CAT_EN[c];
+const catShort = c => lang==='ko' ? c : CAT_SHORT_EN[c];
+const subLabel = s => lang==='ko' ? s : SUB_EN[s];
+const provLabel = p => lang==='ko' ? p : PROV_EN[p];
+const nm = it => lang==='ko' ? it.name : it.nameEn;
+const cd = it => lang==='ko' ? it.code : it.codeEn;
+const regionLabel = it => lang==='ko' ? (it.region || '—') : (it.regionEn ? `${it.regionEn} (${it.region})` : '—');
+const regionHtml = it => lang==='ko' ? esc(it.region || '—') : (it.regionEn ? `${esc(it.regionEn)} <span class="ko">(${esc(it.region)})</span>` : '—');
+
+/* ---------- filters ---------- */
+function buildStatic(){
+  const villages = D.regions.filter(Boolean).length;
+  const provs = new Set(ITEMS.map(x=>x.prov).filter(p=>p!=='기타')).size;
+  $('#stats').innerHTML = t('stats')(fmt(ITEMS.length), fmt(villages), provs);
+
+  const catCount = D.cats.map((_,ci)=>ITEMS.filter(x=>x.c===ci).length);
+  $('#catPills').innerHTML = `<button class="pill ${S.cat<0?'on':''}" data-cat="-1">${t('all')} <span class="n">${fmt(ITEMS.length)}</span></button>` +
+    D.cats.map((c,ci)=>`<button class="pill ${S.cat===ci?'on':''}" data-cat="${ci}">${esc(catLabel(c))} <span class="n">${fmt(catCount[ci])}</span></button>`).join('');
+
+  const provCount = D.provs.map((_,pi)=>ITEMS.filter(x=>x.pv===pi).length);
+  $('#provSel').innerHTML = `<option value="-1">${t('allProv')}</option>` +
+    D.provs.map((p,pi)=>provCount[pi]?`<option value="${pi}" ${S.prov===pi?'selected':''}>${esc(provLabel(p))} (${fmt(provCount[pi])})</option>`:'').join('');
+  $('#sortSel').innerHTML = [['default','sortDefault'],['az','sortAZ'],['region','sortRegion']].map(([v,k])=>`<option value="${v}" ${S.sort===v?'selected':''}>${t(k)}</option>`).join('');
+
+  const cf = $('#cCat'); const keep = cf.value;
+  cf.innerHTML = `<option value="">${t('cPickCat')}</option>` + D.cats.filter(c=>c!=='원본 녹음').map(c=>`<option value="${c}">${esc(catLabel(c))}</option>`).join('') + `<option value="other">${lang==='ko'?'기타':'Other'}</option>`;
+  cf.value = keep;
+}
+function buildSubs(){
+  const box = $('#subChips');
+  if(S.cat<0){ box.hidden = true; return; }
+  const subs = [...new Set(ITEMS.filter(x=>x.c===S.cat).map(x=>x.s))];
+  if(subs.length<2){ box.hidden = true; return; }
+  const cnt = s => ITEMS.filter(x=>x.c===S.cat && x.s===s).length;
+  subs.sort((a,b)=>cnt(b)-cnt(a));
+  box.hidden = false;
+  box.innerHTML = `<button class="sub ${S.sub<0?'on':''}" data-sub="-1">${t('allSub')}</button>` +
+    subs.map(s=>`<button class="sub ${S.sub===s?'on':''}" data-sub="${s}">${esc(subLabel(D.subs[s]))} · ${fmt(cnt(s))}</button>`).join('');
+}
+
+function applyFilters(){
+  const q = S.q.toLowerCase().replace(/\s+/g,'');
+  const base = S.mood && D.moods ? D.moods[S.mood].map(i=>ITEMS[i]) : ITEMS;
+  filtered = base.filter(x => (S.cat<0||x.c===S.cat) && (S.sub<0||x.s===S.sub) && (S.prov<0||x.pv===S.prov) && (!q||x.key.includes(q)));
+  const sortKey = x => nm(x).replace(/^[“"(]+/,'');
+  if(S.sort==='az') filtered.sort((a,b)=>sortKey(a).localeCompare(sortKey(b),lang));
+  else if(S.sort==='region') filtered.sort((a,b)=>(lang==='ko'?a.region.localeCompare(b.region,'ko'):a.regionEn.split(', ').reverse().join(' ').localeCompare(b.regionEn.split(', ').reverse().join(' '),'en'))||sortKey(a).localeCompare(sortKey(b),lang));
+}
+
+function card(x){
+  return `<article class="card" tabindex="0" data-id="${x.i}">
+    <div class="tags"><span class="badge">${esc(catShort(x.cat))}</span>${x.sub!=='미분류'?`<span class="tag2">${esc(subLabel(x.sub))}</span>`:''}</div>
+    <h3>${esc(nm(x))}</h3>
+    <div class="loc">${icon('pin')}<span>${regionHtml(x)}</span></div>
+    <div class="foot"><span class="src">${t('source')}</span>
+      <a class="play" href="${esc(x.url)}" target="_blank" rel="noopener" aria-label="${esc(t('listen'))}: ${esc(nm(x))}" data-stop>${icon('play')}</a></div>
+  </article>`;
+}
+
+function render(){
+  applyFilters(); buildSubs();
+  $('#count').innerHTML = t('count')(fmt(filtered.length));
+  $('#resetBtn').hidden = !(S.q||S.mood||S.cat>=0||S.prov>=0||S.sub>=0);
+  $('#moodPills').innerHTML = MOODS.map(m=>`<button type="button" class="mood ${S.mood===m?'on':''}" data-mood="${m}" aria-pressed="${S.mood===m}">${esc(t('moods')[m])}</button>`).join('');
+  $('#moodDesc').hidden = !S.mood; if(S.mood) $('#moodDesc').textContent = t('moodDesc')[S.mood];
+  const g = $('#grid');
+  if(!filtered.length){ g.innerHTML = `<div class="empty"><h3>${t('emptyT')}</h3><p>${t('emptyP')}</p></div>`; $('#moreBtn').hidden = true; return; }
+  g.innerHTML = filtered.slice(0,S.shown).map(card).join('');
+  const left = filtered.length - S.shown;
+  $('#moreBtn').hidden = left<=0;
+  if(left>0) $('#moreBtn').textContent = t('more')(fmt(left));
+}
+
+let qt;
+$('#q').addEventListener('input', e=>{ clearTimeout(qt); $('#qClear').hidden=!e.target.value; qt=setTimeout(()=>{ S.q=e.target.value.trim(); S.shown=PAGE_SIZE; render(); },120); });
+$('#qClear').onclick = ()=>{ $('#q').value=''; $('#qClear').hidden=true; S.q=''; S.shown=PAGE_SIZE; render(); $('#q').focus(); };
+$('#catPills').addEventListener('click', e=>{ const b=e.target.closest('[data-cat]'); if(!b) return; S.cat=+b.dataset.cat; S.sub=-1; S.shown=PAGE_SIZE;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('on',p===b)); render(); });
+$('#subChips').addEventListener('click', e=>{ const b=e.target.closest('[data-sub]'); if(!b) return; S.sub=+b.dataset.sub; S.shown=PAGE_SIZE; render(); });
+$('#provSel').onchange = e=>{ S.prov=+e.target.value; S.shown=PAGE_SIZE; render(); };
+$('#sortSel').onchange = e=>{ S.sort=e.target.value; render(); };
+$('#moreBtn').onclick = ()=>{ S.shown+=PAGE_SIZE; render(); };
+$('#moodPills').addEventListener('click', e=>{ const b=e.target.closest('[data-mood]'); if(!b) return; S.mood = S.mood===b.dataset.mood ? '' : b.dataset.mood; S.shown=PAGE_SIZE; render(); });
+$('#resetBtn').onclick = ()=>{ Object.assign(S,{q:'',mood:'',cat:-1,sub:-1,prov:-1,shown:PAGE_SIZE}); $('#q').value=''; $('#qClear').hidden=true; buildStatic(); render(); };
+
+/* ---------- detail ---------- */
+let current = null;
+function openDetail(id){
+  const x = ITEMS[id]; current = x;
+  $('#dTags').innerHTML = `<span class="badge">${esc(catLabel(x.cat))}</span>${x.sub!=='미분류'?`<span class="tag2">${esc(subLabel(x.sub))}</span>`:''}`;
+  $('#dTitle').textContent = nm(x);
+  $('#dAbout').textContent = CAT_ABOUT[x.cat][lang];
+  const rows = [
+    lang==='en' && [t('dOrig'), x.code ? `${x.code} / ${x.name}` : x.name],
+    x.code && [t('dCode'), cd(x)],
+    [t('dRegion'), regionLabel(x)],
+    [t('dCountry'), t('country')],
+    [t('dSource'), `<a href="https://urisori.co.kr" target="_blank" rel="noopener">${lang==='ko'?'우리소리':'Urisori'} (urisori.co.kr)</a>`]
+  ].filter(Boolean);
+  $('#dList').innerHTML = rows.map(([k,v])=>`<dt>${k}</dt><dd>${k===t('dSource')?v:esc(v)}</dd>`).join('');
+  $('#dListen').href = x.url;
+  const rel = ITEMS.filter(y=>y.rg===x.rg && y.i!==x.i).slice(0,8);
+  $('#dRelWrap').hidden = !rel.length || !x.region;
+  $('#dRelTitle').textContent = t('relTitle')(lang==='ko' ? x.region.split(' ').slice(-2).join(' ') : x.regionEn.split(', ').slice(0,2).join(', '));
+  $('#dRel').innerHTML = rel.map(y=>`<button type="button" data-id="${y.i}">${esc(nm(y))}</button>`).join('');
+  openModal('#detail');
+}
+$('#dRel').addEventListener('click', e=>{ const b=e.target.closest('[data-id]'); if(b) openDetail(+b.dataset.id); });
+$('#dCopy').onclick = ()=>{
+  const url = current.url;
+  const ok = ()=>toast(t('copied'));
+  if(navigator.clipboard) navigator.clipboard.writeText(url).then(ok).catch(()=>fallbackCopy(url)); else fallbackCopy(url);
+};
+function fallbackCopy(text){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); toast(t('copied'));}catch(e){} ta.remove(); }
+
+document.addEventListener('click', e=>{
+  if(e.target.closest('[data-stop]')) return;
+  const c = e.target.closest('.card[data-id], .mini[data-id], .feature[data-id] [data-open]');
+  if(c){ openDetail(+(c.dataset.id ?? c.closest('[data-id]').dataset.id)); }
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') document.querySelectorAll('.modal:not([hidden])').forEach(m=>closeModal(m));
+  if((e.key==='Enter'||e.key===' ') && e.target.matches('.card[data-id]')){ e.preventDefault(); openDetail(+e.target.dataset.id); }
+});
+
+/* ---------- modals ---------- */
+let lastFocus=null;
+function openModal(sel){ lastFocus=document.activeElement; const m=$(sel); m.hidden=false; document.body.style.overflow='hidden'; m.querySelector('.x').focus(); }
+function closeModal(m){ m.hidden=true; if(!document.querySelector('.modal:not([hidden])')) document.body.style.overflow=''; lastFocus&&lastFocus.focus&&lastFocus.focus(); }
+document.querySelectorAll('.modal').forEach(m=>{
+  m.addEventListener('click', e=>{ if(e.target===m || e.target.closest('[data-close]')) closeModal(m); });
+});
+
+/* ---------- contribute ---------- */
+$('#contribBtn').onclick = ()=>{ $('#cMsg').hidden=true; openModal('#contrib'); };
+$('#cForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const f = e.target, msg = $('#cMsg'), btn = $('#cSubmit');
+  const show = txt=>{ msg.textContent=txt; msg.hidden=false; };
+  const val = id => $('#'+id).value.trim();
+  if($('#cHp').value) return;
+  if(['cName','cCat','cRegion','cCountry'].some(id=>!val(id))) return show(t('cMissing'));
+  const url = val('cUrl');
+  if(!url) return show(t('cNeedAudio'));
+  if(!/^https?:\/\/\S+\.\S+/.test(url)) return show(t('cBadUrl'));
+  if(!fb) return show(t('cNotConnected'));
+
+  btn.disabled = true; btn.textContent = t('cSending'); msg.hidden = true;
+  try{
+    await fb.db.collection('submissions').add({
+      title: val('cName'), category: val('cCat'), region: val('cRegion'), country: val('cCountry'),
+      url, email: val('cEmail'), lang,
+      status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    f.reset(); show(t('cSent'));
+  }catch(err){ console.error(err); show(t('cFail')); }
+  finally{ btn.disabled = false; btn.textContent = t('submit'); }
+});
+
+/* ---------- today ---------- */
+function dayIndex(offset, pool){
+  const d = new Date(); const key = d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+  let h = (key*2654435761 + offset*40503) >>> 0; h ^= h>>>15; h = Math.imul(h,2246822519)>>>0; h ^= h>>>13;
+  return pool[(h>>>0) % pool.length];
+}
+function renderToday(){
+  if(!D) return;
+  const pool = ITEMS.filter(x=>x.cat!=='원본 녹음');
+  const main = dayIndex(1,pool);
+  const picks = [0,1,2,3].map(ci=>{ const p=ITEMS.filter(x=>x.c===ci && x.i!==main.i); return dayIndex(ci+7,p); });
+  const date = new Date().toLocaleDateString(lang==='ko'?'ko-KR':'en-US',{year:'numeric',month:'long',day:'numeric'});
+  $('#pickTitle').innerHTML = lang==='ko' ? '아카이브에서 고른 <span class="ac">오늘의 소리</span>' : 'Today\'s Pick from the <span class="ac">Archive</span>';
+  renderShorts();
+  $('#todayBox').innerHTML = `
+    <div class="feature" data-id="${main.i}">
+      <span class="date">${t('todayLabel')(date)}</span>
+      <div class="tags"><span class="badge">${esc(catLabel(main.cat))}</span><span class="tag2">${esc(subLabel(main.sub))}</span></div>
+      <h2>${esc(nm(main))}</h2>
+      <div class="loc">${icon('pin')}<span>${regionHtml(main)}</span></div>
+      <p class="about">${CAT_ABOUT[main.cat][lang]}</p>
+      <div class="actions" style="margin-top:auto">
+        <a class="btn" href="${esc(main.url)}" target="_blank" rel="noopener">${icon('ext')}<span>${t('listen')}</span></a>
+        <button class="btn ghost" type="button" data-open>${lang==='ko'?'자세히 보기':'Details'}</button>
+      </div>
+    </div>
+    <div class="picks"><h3>${t('alsoToday')}</h3>
+      ${picks.map(x=>`<button class="mini" type="button" data-id="${x.i}"><span class="t"><strong>${esc(nm(x))}</strong><small>${esc(catShort(x.cat))} · ${regionHtml(x)}</small></span><span class="play" aria-hidden="true">${icon('play')}</span></button>`).join('')}
+    </div>`;
+}
+
+/* ---------- shorts ---------- */
+let shortsBuilt = false;
+function renderShorts(){
+  if(!shortsBuilt){
+    shortsBuilt = true;
+    $('#shorts').innerHTML = SHORTS.map((sh,k) => `<div class="short-item">
+      <div class="short-wrap"><video controls playsinline preload="metadata" poster="${VIDEO_BASE}${sh.video}.jpg" src="${VIDEO_BASE}${sh.video}.mp4" aria-label="SoneVault short"></video></div>
+      <div class="short-cap" id="shortCap${k}"></div></div>`).join('');
+    // Only one video plays at a time
+    $('#shorts').addEventListener('play', e=>{ document.querySelectorAll('#shorts video').forEach(v=>{ if(v!==e.target) v.pause(); }); }, true);
+  }
+  // Caption under each video: the featured sound, in the current language
+  SHORTS.forEach((sh,k)=>{
+    const x = ITEMS.find(it=>it.url===sh.sound);
+    const cap = $('#shortCap'+k);
+    cap.innerHTML = `<a class="mini" href="${esc(sh.sound)}" target="_blank" rel="noopener" data-stop aria-label="${esc(t('listen'))}${x?': '+esc(nm(x)):''}">
+        <span class="t"><strong>${x ? esc(nm(x)) : esc(t('listen'))}</strong>${x ? `<small>${esc(catShort(x.cat))} · ${regionHtml(x)}</small>` : ''}</span>
+        <span class="play" aria-hidden="true">${icon('play')}</span></a>`;
+  });
+}
+function pauseShorts(){ document.querySelectorAll('#shorts video').forEach(v=>v.pause()); }
+
+/* ---------- quiz ---------- */
+const QUIZZES = [
+{ id:'basics', title:{ko:'기초 상식 퀴즈',en:'The Basics'}, desc:{ko:'민요, 노동요, 아리랑부터 장구까지. 우리 소리의 기본을 알아봐요.',en:'Folk songs, work songs, Arirang and the janggu. How well do you know the basics?'},
+ qs:[
+ {q:{ko:"'민요(民謠)'는 무슨 뜻일까요?",en:"What does 민요 (minyo) mean?"},
+  o:{ko:['대중가요','민속 노래(백성의 노래)','학교 교가','애국가'],en:['Pop song','Folk song','School song','National anthem']},a:1,
+  x:{ko:"민요는 '백성의 노래'라는 뜻으로, 평범한 사람들이 일하고 놀며 입에서 입으로 전해 온 노래예요.",en:"Minyo literally means 'the people's songs': songs ordinary people passed down by ear while working and playing."}},
+ {q:{ko:"'노동요'는 어떤 노래일까요?",en:"What are 노동요 (nodongyo)?"},
+  o:{ko:['결혼식에서 부르던 노래','일하면서 부르던 노래','아이들만 부르던 노래','절에서 부르던 노래'],en:['Songs sung at weddings','Songs sung while working','Songs sung only by children','Songs sung in temples']},a:1,
+  x:{ko:'논매기, 고기잡이, 집짓기처럼 일마다 그에 맞는 노래가 있었어요.',en:'Almost every job had its own song: weeding, fishing, building and more.'}},
+ {q:{ko:"농부들은 '모심는소리'를 언제 불렀을까요?",en:"When would farmers sing 모심는소리 (mosimneun-sori)?"},
+  o:{ko:['고기 잡을 때','모를 심을 때','장례 때','설날에'],en:['While fishing','While planting rice','At a funeral','At New Year']},a:1,kw:'^모심는소리$',
+  x:{ko:'모내기 철, 논에 줄지어 서서 모를 심으며 부르던 노래예요.',en:'Planters lined up in the flooded paddy and sang as they pushed in the seedlings.'}},
+ {q:{ko:'사람들은 왜 함께 일하며 노래를 불렀을까요?',en:'Why did people sing while working together?'},
+  o:{ko:['동물을 쫓으려고','박자를 맞추고 힘든 일을 덜 힘들게 하려고','상을 받으려고','법으로 정해져 있어서'],en:['To scare away animals','To keep everyone in rhythm and make hard work easier','To win prizes','Because it was required by law']},a:1,
+  x:{ko:'노래에 맞춰 움직이면 손발이 맞고, 힘든 일도 덜 지루했어요.',en:'Moving to the song kept everyone in time, and the hours went by faster.'}},
+ {q:{ko:"많은 노동요가 '메기고 받기' 방식이에요. 무슨 뜻일까요?",en:'Many work songs use 메기고 받기 (call and response). What does that mean?'},
+  o:{ko:['모두 동시에 부른다','한 사람이 앞소리를 메기면 여럿이 받는다','두 편이 노래로 겨룬다','가사 없이 부른다'],en:['Everyone sings at once','One person leads a line and the group answers','Two groups compete','The song has no words']},a:1,
+  x:{ko:'앞소리꾼이 새 가사를 메기면, 나머지 사람들이 같은 후렴으로 받아요.',en:'The lead singer calls out a new line, and everyone answers with the same refrain.'}},
+ {q:{ko:"'자장가'는 어떤 노래일까요?",en:'What is a 자장가 (jajangga)?'},
+  o:{ko:['노동요','군가','아이를 재우는 노래','술자리 노래'],en:['A work song','A war song','A lullaby','A drinking song']},a:2,kw:'자장가',
+  x:{ko:"'자장 자장 우리 아기'처럼 아이를 재울 때 부르던 노래예요.",en:"It's the song for putting a baby to sleep, like 'jajang jajang uri agi'."}},
+ {q:{ko:"'상여소리'는 어떤 자리에서 불렀을까요?",en:'상여소리 (sangyeo-sori) was sung at which event?'},
+  o:{ko:['생일','결혼식','장례 행렬','장날'],en:['A birthday','A wedding','A funeral procession','A market day']},a:2,kw:'^상여소리$',
+  x:{ko:'상여를 메고 가며 상여꾼의 발을 맞추고, 떠난 이를 배웅하던 노래예요.',en:'Pallbearers sang it to keep their steps together and say goodbye to the person who had died.'}},
+ {q:{ko:"'사투리'는 무슨 뜻일까요?",en:'What does 사투리 (saturi) mean?'},
+  o:{ko:['북의 한 종류','지역마다 다른 말(방언)','추수 축제','자장가'],en:['A type of drum','A regional dialect','A harvest festival','A lullaby']},a:1,
+  x:{ko:'같은 말도 지역마다 다르게 쓰는 말이에요. 민요 가사에도 그 지역 사투리가 그대로 담겨 있어요.',en:'It is the local way of speaking, and folk song lyrics keep each region\'s dialect alive.'}},
+ {q:{ko:'한국에서 가장 유명하고, 비공식 국가라고도 불리는 민요는?',en:"Which Korean folk song is the most famous, and is often called Korea's unofficial anthem?"},
+  o:{ko:['아리랑','옹헤야','창부타령','닐리리야'],en:['Arirang (아리랑)','Ongheya (옹헤야)','Changbu Taryeong (창부타령)','Nilliriya (닐리리야)']},a:0,
+  x:{ko:'아리랑은 지역마다 가락이 다른 수많은 버전이 있고, 2012년 유네스코 인류무형문화유산에 올랐어요.',en:'There are dozens of regional versions, and Arirang was added to UNESCO\'s intangible heritage list in 2012.'}},
+ {q:{ko:'정선아리랑은 어느 지역의 노래일까요?',en:'Jeongseon Arirang (정선아리랑) comes from which province?'},
+  o:{ko:['제주','강원','경기','전남'],en:['Jeju','Gangwon','Gyeonggi','South Jeolla']},a:1,kw:'^정선아리랑$',
+  x:{ko:'강원도 정선의 산골에서 전해 온 아리랑으로, 느리고 구슬픈 가락이 특징이에요.',en:'It comes from the mountains of Jeongseon in Gangwon and is known for its slow, mournful tune.'}},
+ {q:{ko:'도라지타령의 도라지는 식물의 어느 부분을 먹을까요?',en:'The folk song Doraji Taryeong (도라지타령) is about which plant?'},
+  o:{ko:['열매','잎','뿌리','씨앗'],en:['Rice','Cabbage','Bellflower root','Ginseng']},a:2,kw:'도라지타령',
+  x:{ko:'도라지는 하얗고 보랏빛 꽃이 피는 산나물로, 뿌리를 캐서 먹어요.',en:'Doraji is the bellflower. People dig up its root to eat, and the song is about gathering it in the hills.'}},
+ {q:{ko:'강강술래는 무엇 아래에서 추던 춤일까요?',en:'Ganggangsullae (강강술래) is a circle dance with singing, traditionally performed under what?'},
+  o:{ko:['무지개','보름달','함박눈','천둥번개'],en:['A rainbow','A full moon','A snowfall','A thunderstorm']},a:1,kw:'강강술래',
+  x:{ko:'추석 보름달 아래 손을 잡고 원을 그리며 추는 춤으로, 2009년 유네스코 인류무형문화유산이 되었어요.',en:'It is danced in a circle under the Chuseok full moon, and UNESCO listed it in 2009.'}},
+ {q:{ko:'노를 저어 바다로 나가며 노래를 부르던 제주 해녀는 무슨 일을 했을까요?',en:"Jeju's haenyeo (해녀), who sang songs while rowing out to sea, are famous for what job?"},
+  o:{ko:['귤 농사','물질(바닷속 해산물 채취)','도자기 만들기','옷감 짜기'],en:['Farming tangerines','Diving for seafood','Making pottery','Weaving cloth']},a:1,
+  x:{ko:'해녀는 숨을 참고 바다에 들어가 전복, 소라 같은 해산물을 땄어요.',en:'Haenyeo held their breath and dove for abalone, conch and other seafood.'}},
+ {q:{ko:'장구는 어떤 모양일까요?',en:'What shape is the janggu (장구) drum?'},
+  o:{ko:['네모','공처럼 둥근 모양','가운데가 잘록한 모래시계 모양','피리처럼 긴 모양'],en:['Square','Round like a ball','Like an hourglass','Long like a flute']},a:2,
+  x:{ko:'가운데가 잘록하고 양쪽 가죽 면의 소리가 서로 달라요.',en:'It is narrow in the middle, and each of its two heads makes a different sound.'}},
+ {q:{ko:'사물놀이는 몇 가지 악기로 연주할까요?',en:'Samulnori (사물놀이) is played with how many instruments?'},
+  o:{ko:['두 가지','세 가지','네 가지','여섯 가지'],en:['Two','Three','Four','Six']},a:2,
+  x:{ko:"꽹과리, 징, 장구, 북. '사물'은 네 가지 물건이라는 뜻이에요.",en:"Kkwaenggwari, jing, janggu and buk. 'Samul' means 'four things'."}}
+ ]},
+{ id:'jobs', title:{ko:'어떤 노래일까?',en:"Guess the Song's Job"}, desc:{ko:'장면과 후렴만 보고, 이 노래가 무엇을 하며 부르던 노래인지 맞혀 보세요.',en:'Read a scene or a refrain and guess what the song was sung for.'},
+ qs:[
+ {q:{ko:"뙤약볕 아래 논에 줄지어 서서 손으로 김을 매며 '에헤 상사디야'를 부릅니다.",en:'Everyone works in a row in the rice paddy, pulling weeds by hand under the hot sun, singing "에헤 상사디야" ("ehe sangsadiya").'},
+  o:{ko:['결혼식','논매기','고기잡이','집짓기'],en:['A wedding','Weeding the rice paddy','Catching fish','Building a house']},a:1,kw:'^논매는소리-상사데야$|^논매는소리$',
+  x:{ko:'논매는소리는 줄지어 선 일꾼들이 같은 속도로 나아가도록 박자를 맞춰 주었어요.',en:'Paddy-weeding songs kept a whole row of workers moving at the same pace.'}},
+ {q:{ko:"긴 도리깨를 위아래로 휘두르며, 앞소리에 맞춰 모두가 '옹헤야!' 하고 받습니다.",en:'Men swing long wooden flails up and down on dried stalks while the leader sings and the group answers "옹헤야!" ("ongheya!").'},
+  o:{ko:['노 젓기','김치 담그기','보리타작','새 쫓기'],en:['Rowing a boat','Making kimchi','Threshing barley','Chasing birds']},a:2,kw:'^보리타작소리$',
+  x:{ko:'옹헤야는 경상도의 보리타작 노래로, 외칠 때마다 도리깨가 내려가요.',en:'Ongheya is a barley-threshing song from Gyeongsang, and each shout matches a swing of the flail.'}},
+ {q:{ko:"'어기야 디여차!' 박자마다 노가 물속으로 들어갑니다.",en:'"어기야 디여차" ("eogiya diyeocha")! Oars dip into the water on every beat.'},
+  o:{ko:['노 젓기','곡식 갈기','아기 재우기','장례'],en:['Rowing a boat','Grinding grain','Putting a baby to sleep','A funeral']},a:0,kw:'^노젓는소리$',
+  x:{ko:'노젓는소리는 모든 노가 같은 순간에 물을 차도록 박자를 맞춰 줘요.',en:'Rowing songs keep every oar hitting the water at the same moment.'}},
+ {q:{ko:"무거운 것을 메고 언덕을 오르며, 느리고 구슬프게 '어너 어너 어너리 넘차'를 부릅니다.",en:'A slow, sad call of "어너 어너 어너리 넘차" ("eoneo eoneo eoneori neomcha") as people carry something heavy up a hill.'},
+  o:{ko:['이삿짐 나르기','상여 메고 장지로 가기','장 보러 가기','재미로 등산하기'],en:['Moving furniture','Carrying a coffin in a funeral procession','Going to market','Climbing for fun']},a:1,kw:'^상여소리$',
+  x:{ko:'상여소리는 상여꾼의 발걸음을 맞추고 떠난 이를 배웅하는 노래예요. 후렴은 마을마다 조금씩 달라요.',en:"Sangyeo-sori guided the pallbearers' steps and said goodbye to the person who had died. The refrain changes a little from village to village."}},
+ {q:{ko:"어두운 방에서 아주 작게 '자장 자장 우리 아기'.",en:'"자장 자장 우리 아기" ("jajang jajang uri agi"), sung very softly in a dark room.'},
+  o:{ko:['노동요','함성','자장가','장보기 목록'],en:['A work song','A battle cry','A lullaby','A shopping list']},a:2,kw:'자장가',
+  x:{ko:"'자장'은 아이를 재울 때 쓰던 말로, 전국의 자장가에 나와요.",en:'Jajang is like "hush-a-bye," and lullabies used it all over Korea.'}},
+ {q:{ko:"할머니가 아기 손을 잡고, 아기가 비틀비틀 서 있는 동안 '불무 불무 불무야'를 부릅니다.",en:'A grandmother holds a baby\'s hands while the baby wobbles on its feet, and she sings "불무 불무 불무야" ("bulmu bulmu bulmuya").'},
+  o:{ko:['요리 가르치기','혼자 서는 연습 돕기','불 피우기','귀신 이야기'],en:['Teaching the baby to cook','Helping the baby practice standing','Lighting a fire','Telling a ghost story']},a:1,kw:'불무 불무|불매 불매',
+  x:{ko:"아기가 흔들거리는 모습이 대장간 풀무(불무)질 같아서 생긴 놀이 노래예요.",en:"The baby's rocking looked like someone pumping a blacksmith's bellows (불무), so the game was named after it."}},
+ {q:{ko:"아이들이 누렇게 익은 논둑을 뛰어다니며 팔을 흔들고 '우여 우여!' 외칩니다.",en:'Children run along the edge of a ripe rice field waving their arms and shouting "우여 우여!" ("uyeo uyeo!").'},
+  o:{ko:['친구 부르기','곡식을 노리는 새 쫓기','달리기 응원','강아지 부르기'],en:['Calling their friends','Scaring birds away from the crops','Cheering at a race','Calling the dog home']},a:1,kw:'^새쫓는소리$|새쫓는',
+  x:{ko:'새쫓는소리로 참새 떼에게서 한 해 농사를 지켰어요.',en:'Bird-chasing songs protected the harvest from sparrows.'}},
+ {q:{ko:'두 여인이 마주 앉아 무겁고 둥근 돌을 빙글빙글 돌립니다.',en:'Two women sit facing each other, turning a heavy round stone around and around.'},
+  o:{ko:['보드게임','맷돌로 곡식 갈기','도자기 빚기','빨래'],en:['Playing a board game','Grinding grain with a millstone (맷돌)','Making pottery','Washing clothes']},a:1,kw:'^맷돌노래$|^맷돌',
+  x:{ko:'맷돌노래는 길고 지루한 맷돌질 시간을 덜어 주었어요.',en:'Millstone songs helped pass the long, tiring hours of grinding.'}},
+ {q:{ko:'밤늦게 커다란 나무틀 앞에 앉아 북을 이리저리 넘기며 자기 신세를 노래합니다.',en:'A woman sits at a big wooden frame late at night, pushing a shuttle back and forth, singing about her life.'},
+  o:{ko:['베틀로 옷감 짜기','악기 연주','저녁 짓기','편지 쓰기'],en:['Weaving cloth on a loom (베틀)','Playing an instrument','Cooking dinner','Writing a letter']},a:0,kw:'^베틀노래$',
+  x:{ko:'베틀노래에는 베 짜는 여인의 고단한 삶이 담겨 있어요.',en:"Weaving songs (베틀노래) often told the story of the weaver's own hardships."}},
+ {q:{ko:'새집을 짓기 전, 여럿이 줄을 매단 큰 돌을 들어 올렸다 내리기를 반복합니다.',en:'A group lifts a heavy stone with ropes and drops it again and again onto fresh ground before a new house is built.'},
+  o:{ko:['줄다리기','집터를 단단히 다지기','우물 파기','길 낼 돌 깨기'],en:['A game of tug-of-war','Packing the ground firm for a house site','Digging a well','Breaking rocks for a road']},a:1,kw:'^집터다지는소리$',
+  x:{ko:'집터다지는소리는 들고 내리는 박자를 맞추고 새집의 복을 빌었어요.',en:'Ground-tamping songs (집터 다지기) timed every lift and drop and wished the new home good luck.'}},
+ {q:{ko:'정월 대보름, 풍물패가 북과 징을 치며 집집마다 마당을 밟고 다닙니다.',en:'On the first full moon of the year, a farmers\' band goes house to house with drums and gongs, stomping in each yard.'},
+  o:{ko:['소음 민원','임금님 행차','집마다 복을 빌고 나쁜 기운 쫓기(지신밟기)','세금 걷기'],en:['A noise complaint','A parade for a king','Blessing each home and chasing away bad spirits (지신밟기)','Collecting taxes']},a:2,kw:'^지신밟기소리$',
+  x:{ko:'지신밟기는 땅의 신을 밟아 달래, 한 해 동안 집안이 평안하길 빌어요.',en:'Jisinbapgi "treads on the earth spirit" so the household stays safe all year.'}},
+ {q:{ko:'산비탈에서 홀로 도끼질하며 느리고 쓸쓸한 노래를 부르는 젊은이.',en:'A young man alone on a mountain slope, swinging an axe and singing a slow, lonely tune.'},
+  o:{ko:['호랑이 사냥','나무하기','보물 찾기','군사 훈련'],en:['Hunting tigers','Gathering firewood','Looking for treasure','Training for the army']},a:1,kw:'^나무꾼신세타령-어사용$|^나무하는소리$',
+  x:{ko:'나무꾼 노래(나무꾼신세타령)는 고된 삶을 털어놓는 구슬픈 노래가 많아요.',en:"Woodcutters' songs (나무꾼 소리) were often sad songs about their hard lives."}},
+ {q:{ko:'보름달 아래 여인들이 큰 원을 그리며 손을 잡고, 노래가 빨라질수록 점점 빠르게 돕니다.',en:'Women in a big circle under the full moon, holding hands and spinning faster and faster as the song speeds up.'},
+  o:{ko:['아침 체조','강강술래','기우제','목화 따기'],en:['A school exercise','Ganggangsullae (강강술래), a holiday circle dance','A rain ritual','Picking cotton']},a:1,kw:'강강술래',
+  x:{ko:'강강술래는 추석에 유명하며, 노래가 빨라질수록 춤도 빨라져요.',en:'Ganggangsullae is famous around Chuseok, and the dance gets faster as the song goes on.'}},
+ {q:{ko:'냇가에서 빨랫방망이로 옷을 두드리며 노래합니다.',en:'A woman sings while scrubbing and beating clothes with a wooden paddle beside a stream.'},
+  o:{ko:['빨래','낚시','떡 만들기','북 연습'],en:['Doing laundry','Fishing','Making rice cakes','Drumming practice']},a:0,kw:'빨래',
+  x:{ko:'빨래노래는 힘든 집안일을 함께 이야기하고 노래하는 시간으로 바꿔 주었어요.',en:'Laundry songs (빨래노래) turned a hard chore into a chance to chat and sing together.'}},
+ {q:{ko:'어부들이 고기가 가득한 무거운 그물을 박자 맞춰 외치며 끌어올립니다.',en:'Fishermen pull in a heavy net full of fish, shouting together in time.'},
+  o:{ko:['싸움 시작','그물 끌어올리기','밀물 부르기','줄다리기 연습'],en:['Starting a fight','Hauling in the catch','Calling the tide','Practicing tug-of-war']},a:1,kw:'^그물당기는소리$',
+  x:{ko:'그물당기는소리 덕분에 모두가 같은 순간에 당겨 그물이 더 빨리 올라왔어요.',en:'Net-hauling songs let the whole crew pull at the same moment, so the net came up faster.'}}
+ ]}
+];
+
+const QZ = {quiz:null, i:0, score:0, picked:null, perms:[]};
+const shuffle = n => { const a=[...Array(n).keys()]; for(let i=n-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+function startQuiz(id){
+  const qz = QUIZZES.find(z=>z.id===id); if(!qz) return;
+  Object.assign(QZ, {quiz:qz, i:0, score:0, picked:null, perms:qz.qs.map(q=>shuffle(q.o.en.length))});
+  renderQuiz(); window.scrollTo(0,0);
+}
+// Each quiz has its own address: /quiz/basics, /quiz/jobs
+function openQuiz(id){
+  const path = id ? '/quiz/'+id : '/quiz';
+  if(location.pathname.replace(/\/+$/,'') !== path){ try{ history.pushState({page:'quiz'}, '', path); }catch(e){} }
+  if(id) startQuiz(id); else { QZ.quiz=null; renderQuiz(); window.scrollTo(0,0); }
+}
+const quizUrl = () => 'https://sonevault.com/quiz' + (QZ.quiz ? '/'+QZ.quiz.id : '');
+async function copyQuizLink(){
+  const url = quizUrl();
+  try{ await navigator.clipboard.writeText(url); toast(t('copied')); }
+  catch(err){ fallbackCopy(url); }
+}
+async function shareScore(){
+  const z = QZ.quiz, text = t('qShareText')(z.title[lang], QZ.score, z.qs.length);
+  if(navigator.share){
+    try{ await navigator.share({title:'SoneVault', text, url:quizUrl()}); return; }
+    catch(err){ if(err && err.name==='AbortError') return; }
+  }
+  const all = `${text} ${quizUrl()}`;
+  try{ await navigator.clipboard.writeText(all); toast(t('qCopied')); }
+  catch(err){ const ta=document.createElement('textarea'); ta.value=all; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); toast(t('qCopied')); }catch(e2){} ta.remove(); }
+}
+function exampleFor(q){
+  if(!q.kw || !ITEMS.length) return null;
+  const re = new RegExp(q.kw);
+  return ITEMS.find(x=>re.test(x.name)) || null;
+}
+function renderQuiz(){
+  const box = $('#quizBox'); if(!box) return;
+  if(!QZ.quiz){
+    box.innerHTML = `<div class="qchoose">${QUIZZES.map((z,k)=>`<button type="button" class="qpick" data-quiz="${z.id}">
+      <span class="num">${t('qCount')(z.qs.length)}</span><h2>${esc(z.title[lang])}</h2><p>${esc(z.desc[lang])}</p>
+      <span class="btn">${t('qStart')}</span></button>`).join('')}</div>`;
+    return;
+  }
+  const z = QZ.quiz, n = z.qs.length;
+  const backBtn = `<div class="qnav"><button type="button" class="qbackbtn" data-qback>${icon('arrow')}<span>${t('qBack')}</span></button>
+    <button type="button" class="qbackbtn" data-qcopy>${icon('link')}<span>${t('copyLink')}</span></button></div>`;
+  if(QZ.i >= n){
+    const tier = QZ.score===n ? 3 : QZ.score >= Math.ceil(n*0.7) ? 2 : QZ.score >= Math.ceil(n*0.4) ? 1 : 0;
+    const other = QUIZZES.find(x=>x.id!==z.id);
+    box.innerHTML = `${backBtn}<div class="qrun"><div class="qresult">
+      <span class="qtop">${esc(z.title[lang])}</span>
+      <div class="qscore">${QZ.score}/${n}</div>
+      <h2>${t('qTiers')[tier]}</h2><p>${t('qScoreOf')(QZ.score,n)}</p>
+      <div class="actions"><button type="button" class="btn" data-qshare>${icon('share')}<span>${t('qShare')}</span></button>
+      <button type="button" class="btn ghost" data-quiz="${z.id}">${t('qAgain')}</button>
+      ${other?`<button type="button" class="btn ghost" data-quiz="${other.id}">${t('qOther')}</button>`:''}
+      <a class="btn ghost" href="/" data-route="home">${t('qArchive')}</a></div></div></div>`;
+    return;
+  }
+  const q = z.qs[QZ.i], perm = QZ.perms[QZ.i], done = QZ.picked!==null;
+  const opts = perm.map((oi,k)=>{
+    let cls = '';
+    if(done){ cls = oi===q.a ? 'right' : (oi===QZ.picked ? 'wrong' : 'dim'); }
+    return `<button type="button" class="qopt ${cls}" data-opt="${oi}" ${done?'disabled':''}><span class="k">${'ABCD'[k]}</span><span>${esc(q.o[lang][oi])}</span></button>`;
+  }).join('');
+  let feed = '';
+  if(done){
+    const ok = QZ.picked===q.a, ex = exampleFor(q);
+    feed = `<div class="qfeed" aria-live="polite"><b class="${ok?'ok':'no'}">${ok?t('qRight'):t('qWrong')(q.o[lang][q.a])}</b><p>${esc(q.x[lang])}</p>
+      ${ex?`<div class="qhear"><span>${t('qHear')}</span><a class="mini" href="${esc(ex.url)}" target="_blank" rel="noopener" data-stop>
+        <span class="t"><strong>${esc(nm(ex))}</strong><small>${esc(catShort(ex.cat))} · ${regionHtml(ex)}</small></span>
+        <span class="play" aria-hidden="true">${icon('play')}</span></a></div>`:''}</div>
+      <div class="qnext"><button type="button" class="btn" id="qNextBtn">${QZ.i===n-1?t('qFinish'):t('qNext')}</button></div>`;
+  }
+  box.innerHTML = `${backBtn}<div class="qrun">
+    <div class="qtop"><span>${esc(z.title[lang])}</span><span>${QZ.i+1} / ${n}</span></div>
+    <div class="qbar"><span style="width:${(QZ.i+(done?1:0))/n*100}%"></span></div>
+    <p class="qq">${esc(q.q[lang])}</p>
+    <div class="qopts">${opts}</div>${feed}</div>`;
+  if(done) $('#qNextBtn').focus();
+}
+$('#quizBox').addEventListener('click', e=>{
+  const pick = e.target.closest('[data-quiz]'); if(pick){ openQuiz(pick.dataset.quiz); return; }
+  if(e.target.closest('[data-qback]')){ openQuiz(''); return; }
+  if(e.target.closest('[data-qcopy]')){ copyQuizLink(); return; }
+  if(e.target.closest('[data-qshare]')){ shareScore(); return; }
+  const o = e.target.closest('[data-opt]');
+  if(o && QZ.picked===null){ QZ.picked=+o.dataset.opt; if(QZ.picked===QZ.quiz.qs[QZ.i].a) QZ.score++; renderQuiz(); return; }
+  if(e.target.closest('#qNextBtn')){ QZ.i++; QZ.picked=null; renderQuiz(); $('#quizBox').scrollIntoView({block:'start'}); }
+});
+
+/* ---------- routing ---------- */
+const PAGES = ['home','about','today','quiz'];
+function currentPage(){
+  const segs = location.pathname.replace(/\/+$/,'').split('/');
+  const qi = segs.lastIndexOf('quiz');
+  if(qi>=0 && qi>=segs.length-2) return 'quiz';
+  const seg = segs.pop();
+  return PAGES.includes(seg) ? seg : 'home';
+}
+function currentQuizId(){
+  const segs = location.pathname.replace(/\/+$/,'').split('/');
+  const qi = segs.lastIndexOf('quiz');
+  return qi>=0 && segs[qi+1] && QUIZZES.some(z=>z.id===segs[qi+1]) ? segs[qi+1] : '';
+}
+function route(){
+  const page = currentPage();
+  PAGES.forEach(p=>{ $('#page-'+p).hidden = p!==page; });
+  document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('on', a.dataset.route===page));
+  if(page==='today') renderToday(); else pauseShorts();
+  if(page==='quiz'){
+    const id = currentQuizId();
+    if(id && (!QZ.quiz || QZ.quiz.id!==id)) startQuiz(id);
+    else if(!id && QZ.quiz){ QZ.quiz=null; renderQuiz(); }
+    else renderQuiz();
+  }
+  window.scrollTo(0,0);
+}
+function go(page){
+  const path = page==='home' ? '/' : '/'+page;
+  if(location.pathname !== path){ try{ history.pushState({page}, '', path); }catch(e){} }
+  route();
+}
+// Same-page navigation without reloading
+document.addEventListener('click', e=>{
+  const a = e.target.closest('a[data-route]');
+  if(!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button!==0) return;
+  e.preventDefault(); go(a.dataset.route);
+});
+window.addEventListener('popstate', route);
+// Old links like sonevault.com/#about still work
+(function(){ const h = location.hash.slice(1); if(PAGES.includes(h)){ try{ history.replaceState(null,'', h==='home'?'/':'/'+h); }catch(e){} } })();
+
+function toast(msg){ const el=$('#toast'); el.textContent=msg; el.hidden=false; clearTimeout(el._t); el._t=setTimeout(()=>el.hidden=true,1800); }
+
+applyLang();
+</script>
+</body>
+</html>

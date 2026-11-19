@@ -140,9 +140,10 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;backgroun
 .qpick .btn{align-self:flex-start;margin-top:8px}
 .qrun{max-width:720px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:34px}
 .qtop{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums}
-.qnav{max-width:720px;margin:0 auto 14px}
+.qnav{max-width:720px;margin:0 auto 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .qbackbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:99px;padding:9px 18px 9px 14px;font-size:14px;font-weight:600;cursor:pointer;transition:border-color .15s,color .15s}
-.qbackbtn svg{width:16px;height:16px;transform:rotate(180deg)}
+.qbackbtn svg{width:16px;height:16px}
+.qbackbtn[data-qback] svg{transform:rotate(180deg)}
 .qbackbtn:hover{border-color:var(--accent);color:var(--accent)}
 .qbar{height:6px;background:var(--chip);border-radius:99px;margin:12px 0 26px;overflow:hidden}
 .qbar span{display:block;height:100%;background:var(--accent);border-radius:inherit;transition:width .3s}
@@ -332,6 +333,7 @@ footer .wrap{display:flex;gap:10px 24px;flex-wrap:wrap;justify-content:space-bet
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L7.5 3.64A1 1 0 0 0 6 4.5Z"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
@@ -576,7 +578,7 @@ ko:{langLabel:'EN',light:'라이트',dark:'다크',themeToDark:'다크 모드로
  moodDesc:{comfort:'아이를 달래던 소리와 복을 비는 소리로 마음을 토닥여 보세요.',motivate:'힘을 모아 일하던 사람들의 힘찬 소리를 들어 보세요.',funny:'방귀, 이, 영감님까지. 웃음이 터지는 익살스러운 노래들이에요.',happy:'명절 놀이와 잔치 자리에서 부르던 신나는 노래들이에요.',sad:'고된 삶과 이별을 담아낸 구슬픈 노래들이에요.'},
  quizTitle:'소리 <span class="ac">퀴즈</span>',quizSub:'가볍게 풀어 보는 우리 소리 상식 퀴즈',
  qCount:(n)=>`${n}문제`,qStart:'시작하기',qBack:'퀴즈 목록',qRight:'정답이에요!',qWrong:(a)=>`아쉬워요. 정답은 '${a}'예요.`,qNext:'다음 문제',qFinish:'결과 보기',qHear:'실제 녹음 들어 보기',
- qScoreOf:(s,n)=>`${n}문제 중 ${s}문제를 맞혔어요`,qAgain:'다시 풀기',qOther:'다른 퀴즈 풀기',qArchive:'아카이브 둘러보기',
+ qScoreOf:(s,n)=>`${n}문제 중 ${s}문제를 맞혔어요`,qShare:'결과 공유하기',qShareText:(q,s,n)=>`SoneVault 소리 퀴즈 '${q}'에서 ${n}문제 중 ${s}문제를 맞혔어요! 나도 도전해 보세요.`,qCopied:'공유 문구와 링크를 복사했어요',qAgain:'다시 풀기',qOther:'다른 퀴즈 풀기',qArchive:'아카이브 둘러보기',
  qTiers:['괜찮아요, 이제 시작이에요!','좋아요! 조금만 더 들어 볼까요?','아주 잘했어요!','완벽해요! 소리 박사네요.'],
  heroTitle:'세상의 <span class="ac">소리</span>',heroLede:'전 세계의 인간적 표현을 모은 협업 플랫폼입니다. 잊혀진 언어, 지역 방언, 전통 민요를 발견해 보세요.',
  searchPh:'제목, 지역 또는 유형으로 검색...',stats:(n,v,p)=>`<span><b>${n}</b>개의 소리</span><span><b>${v}</b>개 마을</span><span><b>${p}</b>개 시·도</span>`,
@@ -612,7 +614,7 @@ en:{langLabel:'KO',light:'Light',dark:'Dark',themeToDark:'Switch to dark mode',t
  moodDesc:{comfort:'Soothing baby songs and blessing songs for when you need a little reassurance.',motivate:'Rousing work songs from people pulling together.',funny:'Playful songs about farts, lice and grumpy old men.',happy:'Bright songs from holidays, games and village parties.',sad:'Mournful songs about hard lives and goodbyes.'},
  quizTitle:'Sound <span class="ac">Quiz</span>',quizSub:'Two quick, just-for-fun quizzes about Korea\'s traditional sounds.',
  qCount:(n)=>`${n} questions`,qStart:'Start',qBack:'All quizzes',qRight:'Correct!',qWrong:(a)=>`Not quite. The answer is "${a}".`,qNext:'Next question',qFinish:'See results',qHear:'Hear a real recording',
- qScoreOf:(s,n)=>`You got ${s} out of ${n} right`,qAgain:'Try again',qOther:'Try the other quiz',qArchive:'Explore the archive',
+ qScoreOf:(s,n)=>`You got ${s} out of ${n} right`,qShare:'Share my score',qShareText:(q,s,n)=>`I got ${s}/${n} on the SoneVault "${q}" quiz! Can you beat me?`,qCopied:'Copied your score and the link',qAgain:'Try again',qOther:'Try the other quiz',qArchive:'Explore the archive',
  qTiers:['Nice try! This is just the beginning.','Good job! Want to listen to a few more?','Great work!','Perfect! You\'re a sound expert.'],
  heroTitle:'Voices of the <span class="ac">Earth</span>',heroLede:'A collaborative platform gathering human expression from across the world. Discover forgotten languages, regional dialects, and traditional folk songs.',
  searchPh:'Search by title, region, or type...',stats:(n,v,p)=>`<span><b>${n}</b> recordings</span><span><b>${v}</b> villages</span><span><b>${p}</b> provinces</span>`,
@@ -1023,9 +1025,31 @@ const QUIZZES = [
 const QZ = {quiz:null, i:0, score:0, picked:null, perms:[]};
 const shuffle = n => { const a=[...Array(n).keys()]; for(let i=n-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
 function startQuiz(id){
-  const qz = QUIZZES.find(z=>z.id===id);
+  const qz = QUIZZES.find(z=>z.id===id); if(!qz) return;
   Object.assign(QZ, {quiz:qz, i:0, score:0, picked:null, perms:qz.qs.map(q=>shuffle(q.o.en.length))});
   renderQuiz(); window.scrollTo(0,0);
+}
+// Each quiz has its own address: /quiz/basics, /quiz/jobs
+function openQuiz(id){
+  const path = id ? '/quiz/'+id : '/quiz';
+  if(location.pathname.replace(/\/+$/,'') !== path){ try{ history.pushState({page:'quiz'}, '', path); }catch(e){} }
+  if(id) startQuiz(id); else { QZ.quiz=null; renderQuiz(); window.scrollTo(0,0); }
+}
+const quizUrl = () => 'https://sonevault.com/quiz' + (QZ.quiz ? '/'+QZ.quiz.id : '');
+async function copyQuizLink(){
+  const url = quizUrl();
+  try{ await navigator.clipboard.writeText(url); toast(t('copied')); }
+  catch(err){ fallbackCopy(url); }
+}
+async function shareScore(){
+  const z = QZ.quiz, text = t('qShareText')(z.title[lang], QZ.score, z.qs.length);
+  if(navigator.share){
+    try{ await navigator.share({title:'SoneVault', text, url:quizUrl()}); return; }
+    catch(err){ if(err && err.name==='AbortError') return; }
+  }
+  const all = `${text} ${quizUrl()}`;
+  try{ await navigator.clipboard.writeText(all); toast(t('qCopied')); }
+  catch(err){ const ta=document.createElement('textarea'); ta.value=all; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); toast(t('qCopied')); }catch(e2){} ta.remove(); }
 }
 function exampleFor(q){
   if(!q.kw || !ITEMS.length) return null;
@@ -1041,7 +1065,8 @@ function renderQuiz(){
     return;
   }
   const z = QZ.quiz, n = z.qs.length;
-  const backBtn = `<div class="qnav"><button type="button" class="qbackbtn" data-qback>${icon('arrow')}<span>${t('qBack')}</span></button></div>`;
+  const backBtn = `<div class="qnav"><button type="button" class="qbackbtn" data-qback>${icon('arrow')}<span>${t('qBack')}</span></button>
+    <button type="button" class="qbackbtn" data-qcopy>${icon('link')}<span>${t('copyLink')}</span></button></div>`;
   if(QZ.i >= n){
     const tier = QZ.score===n ? 3 : QZ.score >= Math.ceil(n*0.7) ? 2 : QZ.score >= Math.ceil(n*0.4) ? 1 : 0;
     const other = QUIZZES.find(x=>x.id!==z.id);
@@ -1049,7 +1074,8 @@ function renderQuiz(){
       <span class="qtop">${esc(z.title[lang])}</span>
       <div class="qscore">${QZ.score}/${n}</div>
       <h2>${t('qTiers')[tier]}</h2><p>${t('qScoreOf')(QZ.score,n)}</p>
-      <div class="actions"><button type="button" class="btn" data-quiz="${z.id}">${t('qAgain')}</button>
+      <div class="actions"><button type="button" class="btn" data-qshare>${icon('share')}<span>${t('qShare')}</span></button>
+      <button type="button" class="btn ghost" data-quiz="${z.id}">${t('qAgain')}</button>
       ${other?`<button type="button" class="btn ghost" data-quiz="${other.id}">${t('qOther')}</button>`:''}
       <a class="btn ghost" href="/" data-route="home">${t('qArchive')}</a></div></div></div>`;
     return;
@@ -1077,8 +1103,10 @@ function renderQuiz(){
   if(done) $('#qNextBtn').focus();
 }
 $('#quizBox').addEventListener('click', e=>{
-  const pick = e.target.closest('[data-quiz]'); if(pick){ startQuiz(pick.dataset.quiz); return; }
-  if(e.target.closest('[data-qback]')){ QZ.quiz=null; renderQuiz(); return; }
+  const pick = e.target.closest('[data-quiz]'); if(pick){ openQuiz(pick.dataset.quiz); return; }
+  if(e.target.closest('[data-qback]')){ openQuiz(''); return; }
+  if(e.target.closest('[data-qcopy]')){ copyQuizLink(); return; }
+  if(e.target.closest('[data-qshare]')){ shareScore(); return; }
   const o = e.target.closest('[data-opt]');
   if(o && QZ.picked===null){ QZ.picked=+o.dataset.opt; if(QZ.picked===QZ.quiz.qs[QZ.i].a) QZ.score++; renderQuiz(); return; }
   if(e.target.closest('#qNextBtn')){ QZ.i++; QZ.picked=null; renderQuiz(); $('#quizBox').scrollIntoView({block:'start'}); }
@@ -1087,15 +1115,28 @@ $('#quizBox').addEventListener('click', e=>{
 /* ---------- routing ---------- */
 const PAGES = ['home','about','today','quiz'];
 function currentPage(){
-  const seg = location.pathname.replace(/\/+$/,'').split('/').pop();
+  const segs = location.pathname.replace(/\/+$/,'').split('/');
+  const qi = segs.lastIndexOf('quiz');
+  if(qi>=0 && qi>=segs.length-2) return 'quiz';
+  const seg = segs.pop();
   return PAGES.includes(seg) ? seg : 'home';
+}
+function currentQuizId(){
+  const segs = location.pathname.replace(/\/+$/,'').split('/');
+  const qi = segs.lastIndexOf('quiz');
+  return qi>=0 && segs[qi+1] && QUIZZES.some(z=>z.id===segs[qi+1]) ? segs[qi+1] : '';
 }
 function route(){
   const page = currentPage();
   PAGES.forEach(p=>{ $('#page-'+p).hidden = p!==page; });
   document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('on', a.dataset.route===page));
   if(page==='today') renderToday(); else pauseShorts();
-  if(page==='quiz') renderQuiz();
+  if(page==='quiz'){
+    const id = currentQuizId();
+    if(id && (!QZ.quiz || QZ.quiz.id!==id)) startQuiz(id);
+    else if(!id && QZ.quiz){ QZ.quiz=null; renderQuiz(); }
+    else renderQuiz();
+  }
   window.scrollTo(0,0);
 }
 function go(page){
